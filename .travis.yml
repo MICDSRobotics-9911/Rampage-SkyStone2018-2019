@@ -10,12 +10,12 @@ android:
  components:
   - tools
   - platform-tools
-  - build-tools-27.0.3
+  #- build-tools-27.0.3
   - build-tools-28.0.3
   - android-19 #Minimum API Version
-  - android-23 #Target API Version
-  - android-26 #Newest API Version
-  - android-28
+  #- android-23 #Target API Version
+  - android-26
+  - android-28 # Newest API Version
   - extra-google-google_play_services
   - extra-google-m2repository #linter and some other extras
   - extra-android-m2repository
@@ -28,8 +28,8 @@ android:
 script:
  - ./gradlew build ConnectedCheck
 
-#notifications:
-#slack: technoramic5190:DzHEyly89iwtuHPp933y0cNE
+notifications:
+slack: micdsrobotics:qcXw3Esv6LL4WpW60T5q7cZA
 
 #
 #  before_script:
