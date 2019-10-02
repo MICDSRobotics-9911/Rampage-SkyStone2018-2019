@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="red_perimeter_target_2" size="0.292100 0.225803" />
+    <ImageTarget name="red_perimeter_target_1" size="0.292100 0.225803" />
+    <ImageTarget name="rear_perimeter_target_2" size="0.292100 0.225803" />
+    <ImageTarget name="rear_perimeter_target_1" size="0.292100 0.225803" />
+    <ImageTarget name="front_perimeter_target_2" size="0.292100 0.225803" />
+    <ImageTarget name="front_perimeter_target_1" size="0.292100 0.225803" />
+    <ImageTarget name="blue_perimeter_target_2" size="0.292100 0.225803" />
+    <ImageTarget name="blue_perimeter_target_1" size="0.292100 0.225803" />
+  </Tracking>
+</QCARConfig>
