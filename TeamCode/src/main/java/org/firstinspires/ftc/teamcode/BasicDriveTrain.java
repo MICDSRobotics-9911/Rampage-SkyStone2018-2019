@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
@@ -16,7 +14,10 @@ public class BasicDriveTrain extends OpMode {
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
     private DcMotor arm;
+    private DcMotor elevator;
     private CRServo grabber;
+
+    // gamepad states
 
     @Override
     public void init() {
@@ -24,6 +25,7 @@ public class BasicDriveTrain extends OpMode {
         this.mecanumDrive = (MecanumDrive) this.robot.getDrivetrain();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.arm = hardwareMap.get(DcMotor.class, "arm");
+        this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(CRServo.class, "grabber");
     }
 
@@ -32,42 +34,32 @@ public class BasicDriveTrain extends OpMode {
         this.mecanumDrive.complexDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
         // grabber
-        if (gamepad1.right_bumper) {
-            this.grabber.setPower(0.5);
-        }
-        else if (gamepad1.left_bumper) {
-            this.grabber.setPower(-0.5);
-        }
-        else {
-            this.grabber.setPower(0);
-        }
+        this.grabber.setPower((gamepad1.dpad_left) ? 0.5 : 0);
+        this.grabber.setPower((gamepad1.dpad_right) ? -0.5 : 0);
+
+        // arm
+        this.arm.setPower((gamepad1.dpad_up) ? -1 : 0);
+        this.arm.setPower((gamepad1.dpad_up) ? 1 : 0);
+        this.arm.setPower((gamepad1.dpad_down) ? 1 : 0);
+        this.arm.setPower((gamepad1.dpad_down) ? -1 : 0);
 
         // intake
-        if (gamepad1.dpad_left) {
-            this.intake.getMotor1().setPower(1);
-            this.intake.getMotor2().setPower(-1);
-        }
-        else if (gamepad1.dpad_right) {
-            this.intake.getMotor1().setPower(-1);
-            this.intake.getMotor2().setPower(1);
-        }
+        this.intake.getMotor1().setPower((gamepad1.x) ? 1 : 0);
+        this.intake.getMotor2().setPower((gamepad1.x) ? -1 : 0);
+        this.intake.getMotor1().setPower((gamepad1.y) ? -1 : 0);
+        this.intake.getMotor2().setPower((gamepad1.y) ? 1 : 0);
 
-        if (gamepad1.dpad_up) {
-            this.arm.setPower(1);
-        }
-        else if (gamepad1.dpad_down) {
-            this.arm.setPower(-1);
-        }
-        else {
-            this.arm.setPower(0);
-        }
+        // elevator
+        this.elevator.setPower((gamepad1.a) ? 1 : 0);
+        this.elevator.setPower((gamepad1.b) ? -1 : 0);
 
         // stop
-        if (gamepad1.x) {
+        if (gamepad1.right_bumper) {
             this.intake.stopMoving();
             this.mecanumDrive.stopMoving();
             this.grabber.setPower(0);
             this.arm.setPower(0);
+            this.elevator.setPower(0);
         }
     }
 }
