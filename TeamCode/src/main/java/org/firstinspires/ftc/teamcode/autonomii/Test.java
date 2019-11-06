@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomii;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 
+@Disabled
 public class Test extends LinearOpMode {
 
     OpenGLMatrix lastLocation = null;
@@ -52,25 +54,26 @@ public class Test extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            for (VuforiaTrackable trackable : allTrackables) {
+            /*for (VuforiaTrackable trackable : allTrackables) {
                 /**
                  * getUpdatedRobotLocation() will return null if no new information is available since
                  * the last time that call was made, or if the trackable is not currently visible.
                  * getRobotLocation() will return null if the trackable is not currently visible.
-                 */
+
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
+             */
             }
             /**
              * Provide feedback as to where the robot was last located (if we know).
              */
             if (lastLocation != null) {
                 //  RobotLog.vv(TAG, "robot=%s", format(lastLocation));
-                telemetry.addData("Pos", format(lastLocation));
+                //telemetry.addData("Pos", format(lastLocation));
             } else {
                 telemetry.addData("Pos", "Unknown");
             }
@@ -79,4 +82,4 @@ public class Test extends LinearOpMode {
 
         // game start
     }
-}
+
