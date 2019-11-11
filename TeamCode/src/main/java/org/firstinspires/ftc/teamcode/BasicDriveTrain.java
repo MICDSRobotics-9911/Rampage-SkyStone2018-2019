@@ -36,28 +36,23 @@ public class BasicDriveTrain extends OpMode {
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
         // grabber
-        this.grabber.setPower((gamepad1.dpad_left || gamepad2.dpad_left) ? 0.5 : 0);
-        this.grabber.setPower((gamepad1.dpad_right || gamepad2.dpad_right) ? -0.5 : 0);
+        this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_left || gamepad2.dpad_left) ? 1 : 0);
+        this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_right || gamepad2.dpad_right) ? -1 : 0);
 
         // arm
-        this.arm.setPower((gamepad1.dpad_up || gamepad2.dpad_up) ? 1 : 0);
-        this.arm.setPower((gamepad1.dpad_down || gamepad2.dpad_down) ? -1 : 0);
+        this.arm.setPower((this.arm.getPower() == 0) && (gamepad1.dpad_up || gamepad2.dpad_up) ? 1 : 0);
+        this.arm.setPower((this.arm.getPower() == 0) && (gamepad1.dpad_down || gamepad2.dpad_down) ? -1 : 0);
         /*this.arm.setPower((gamepad1.dpad_down || gamepad2.dpad_down) ? 1 : 0);
         this.arm.setPower((gamepad1.dpad_down || gamepad2.dpad_down) ? -1 : 0);*/
 
         // intake
-        this.intake.getMotor1().setPower((gamepad1.x || gamepad2.x) ? 1 : 0);
-        this.intake.getMotor2().setPower((gamepad1.x || gamepad2.x) ? -1 : 0);
-        this.intake.getMotor1().setPower((gamepad1.y || gamepad2.y) ? -1 : 0);
-        this.intake.getMotor2().setPower((gamepad1.y || gamepad2.y) ? 1 : 0);
+        this.intake.getMotor1().setPower((this.intake.getMotor1().getPower() == 0) && (gamepad1.x || gamepad2.x) ? 1 : 0);
+        this.intake.getMotor2().setPower((this.intake.getMotor2().getPower() == 0) && (gamepad1.x || gamepad2.x) ? -1 : 0);
+        this.intake.getMotor1().setPower((this.intake.getMotor1().getPower() == 0) && (gamepad1.y || gamepad2.y) ? -1 : 0);
+        this.intake.getMotor2().setPower((this.intake.getMotor2().getPower() == 0) && (gamepad1.y || gamepad2.y) ? 1 : 0);
 
         // elevator
-        /*this.elevator.setPower(this.elevator.getPower() == 0 && ((gamepad1.a || gamepad2.a)) ? 1 : 0);
-        this.elevator.setPower(this.elevator.getPower() == 0 && (gamepad1.b || gamepad2.b) ? -1 : 0);*/
-        if (this.elevator.getPower() == 0 && gamepad1.right_bumper) {
-            Log.i("[DT]", "fired");
-            this.elevator.setPower(1);
-        }
+        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.right_bumper) ? 1 : 0);
 
         // stop
         if (gamepad1.right_bumper) {
