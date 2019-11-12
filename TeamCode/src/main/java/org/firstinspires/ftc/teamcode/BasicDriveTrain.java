@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
@@ -17,7 +19,7 @@ public class BasicDriveTrain extends OpMode {
     private MotorPair intake;
     private DcMotor arm;
     private DcMotor elevator;
-    private CRServo grabber;
+    private Servo grabber;
 
     // gamepad states
 
@@ -28,7 +30,10 @@ public class BasicDriveTrain extends OpMode {
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.arm = hardwareMap.get(DcMotor.class, "arm");
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
-        this.grabber = hardwareMap.get(CRServo.class, "grabber");
+        this.grabber = hardwareMap.get(Servo.class, "grabber");
+
+        this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -36,8 +41,15 @@ public class BasicDriveTrain extends OpMode {
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
         // grabber
-        this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_left || gamepad2.dpad_left) ? 1 : 0);
-        this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_right || gamepad2.dpad_right) ? -1 : 0);
+        /*this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_left || gamepad2.dpad_left) ? 1 : 0);
+        this.grabber.setPower((this.grabber.getPower() == 0) && (gamepad1.dpad_right || gamepad2.dpad_right) ? -1 : 0);*/
+        //this.grabber.setPosition((gamepad1.dpad_right || gamepad2.dpad_right) ? -1 : 0);
+        if (gamepad1.right_bumper) {
+            this.grabber.setPosition(1);
+        }
+        else {
+            this.grabber.setPosition(0);
+        }
 
         // arm
         this.arm.setPower((this.arm.getPower() == 0) && (gamepad1.dpad_up || gamepad2.dpad_up) ? 1 : 0);
@@ -52,13 +64,14 @@ public class BasicDriveTrain extends OpMode {
         this.intake.getMotor2().setPower((this.intake.getMotor2().getPower() == 0) && (gamepad1.y || gamepad2.y) ? 1 : 0);
 
         // elevator
-        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.right_bumper) ? 1 : 0);
+        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
+        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);
 
         // stop
         if (gamepad1.right_bumper) {
             this.intake.stopMoving();
             this.mecanumDrive.stopMoving();
-            this.grabber.setPower(0);
+            //this.grabber.setPower(0);
             this.arm.setPower(0);
             this.elevator.setPower(0);
         }
