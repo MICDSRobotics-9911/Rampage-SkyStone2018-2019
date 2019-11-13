@@ -45,8 +45,8 @@ public class DetectSkyStone extends LinearOpMode {
             telemetry.addData("Alpha", this.colorSensor.alpha());
             telemetry.update();
 
-            if ((((int)this.hsvValues[0] * this.SCALE_FACTOR) < 70)) {
-                this.mecanumDrive.complexDrive(0, 0.5, 0);
+            if ((((int)this.hsvValues[0]) < 85)) {
+                this.mecanumDrive.complexDrive(0, 1, 0);
             }
             else {
                 // found a skystone
