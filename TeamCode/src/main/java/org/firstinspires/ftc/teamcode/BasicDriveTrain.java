@@ -36,7 +36,7 @@ public class BasicDriveTrain extends OpMode {
 
     @Override
     public void loop() {
-        this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
+        this.mecanumDrive.complexDrive(-gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
 
         // grabber
         this.grabber.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 1 : 0);
