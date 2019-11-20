@@ -24,6 +24,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
     private DcMotor arm;
     private DcMotor elevator;
     private Servo grabber;
+    private Servo assist;
     private Servo clamp;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
@@ -41,6 +42,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
         this.arm = hardwareMap.get(DcMotor.class, "arm");
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
+        this.assist = hardwareMap.get(Servo.class, "assist");
         this.clamp = hardwareMap.get(Servo.class, "clamp");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
@@ -66,6 +68,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
 
             switch (step) {
                 case 0:
+                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
                     // TODO: 11/18/2019 check to see if we've hit the depot wall using another color sensor
                     if ((((int) this.hsvValues[0]) < 85)) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
@@ -93,43 +96,53 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
                     break;
                 case 3:
                     // open the claw and grab the skystone
-                    this.grabber.setPosition(0.25);
-                    sleep(1500);
                     this.grabber.setPosition(0);
+                    sleep(1500);
+                    //this.grabber.setPosition(0.5);
                     step++;
                     break;
                 case 4:
                     // move arm back up a bit
                     this.arm.setPower(1);
-                    sleep(550);
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE);
                     this.arm.setPower(0);
                     step++;
                     break;
                 case 5:
                     // move towards the foundation by hitting a wall
-                    if (!this.touchSensorLeft.isPressed()) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
+                    telemetry.addData("button", this.touchSensorRight.getValue());
+                    if (this.touchSensorRight.getValue() == 1) {
+                        this.mecanumDrive.stopMoving();
+                        this.step++;
                     }
                     else {
-                        this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
                     }
                     break;
                 case 6:
+                    // move forwards
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(14.4, 55));
+                    this.mecanumDrive.stopMoving();
                     // down the clamp
                     this.clamp.setPosition(0);
+                    sleep(500);
+                    this.step++;
                     break;
                 case 7:
                     // drag the foundation until a button press (it's against a wall)
-                    if (!this.touchSensorLeft.isPressed()) {
-                        this.mecanumDrive.complexDrive(0, 1, 0);
+                    if (!this.touchSensorRight.isPressed()) {
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
                     }
                     else {
                         this.mecanumDrive.stopMoving();
+                        this.step++;
                     }
                     break;
                 case 8:
                     // open the clamp
-                    this.clamp.setPosition(1);
+                    this.clamp.setPosition(0.5);
+                    this.step++;
                     break;
             }
         }
