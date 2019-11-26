@@ -4,12 +4,13 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
@@ -28,6 +29,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
     private Servo clamp;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
+    private DistanceSensor frontDistance;
 
 
     private float hsvValues[] = {0F, 0F, 0F};
@@ -46,6 +48,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
         this.clamp = hardwareMap.get(Servo.class, "clamp");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
+        this.frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
 
         waitForStart();
 
@@ -131,7 +134,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
                     break;
                 case 7:
                     // drag the foundation until a button press (it's against a wall)
-                    if (!this.touchSensorRight.isPressed()) {
+                    if (this.frontDistance.getDistance(DistanceUnit.CM) < AutonomousConstants.DISTANCE_TO_WALL_FROM_FOUNDATION) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
                     }
                     else {
