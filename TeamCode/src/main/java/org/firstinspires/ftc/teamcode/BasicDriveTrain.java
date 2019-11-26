@@ -20,6 +20,10 @@ public class BasicDriveTrain extends OpMode {
     private DcMotor arm;
     private DcMotor elevator;
     private Servo grabber;
+    private Servo assist;
+    private Servo clamp;
+    //private boolean isGrabberLocked = true;
+    private boolean isGrabberOpen = false;
 
     @Override
     public void init() {
@@ -29,6 +33,7 @@ public class BasicDriveTrain extends OpMode {
         this.arm = hardwareMap.get(DcMotor.class, "arm");
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
+        this.assist = hardwareMap.get(Servo.class, "assist");
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -36,16 +41,28 @@ public class BasicDriveTrain extends OpMode {
 
     @Override
     public void loop() {
-        this.mecanumDrive.complexDrive(-gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.right_stick_x, telemetry);
+        telemetry.addData("isGrabberOpen", this.isGrabberOpen);
+        telemetry.update();
+
+        this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
         // grabber
-        this.grabber.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 1 : 0);
-        /*if (gamepad1.right_bumper) {
+
+        this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 0 : 0.65); // !this.isGrabberLocked
+
+        if (!this.isGrabberOpen && (this.gamepad2.dpad_left || this.gamepad1.dpad_left)) {
+            // open the grabber all the way
+            this.isGrabberOpen = true;
             this.grabber.setPosition(1);
         }
-        else {
-            this.grabber.setPosition(0);
-        }*/
+        else if (this.isGrabberOpen && (this.gamepad2.dpad_right || this.gamepad1.dpad_right)) {
+            // close the grabber
+            this.isGrabberOpen = false;
+            this.grabber.setPosition(0.15);
+        }
+
+        // TODO: 11/25/2019 need to break this ternary out
+        this.grabber.setPosition(((gamepad1.right_bumper || gamepad2.right_bumper)) ? 0.25 : 0.15);
 
         // arm
         this.arm.setPower(gamepad2.left_stick_y * -0.5);
