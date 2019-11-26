@@ -8,12 +8,14 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.lib.GrabberState;
+import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @TeleOp(name = "9911DT", group = "Basic")
-public class BasicDriveTrain extends OpMode {
+public class BasicDriveTrain extends OpMode implements TeleOpConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -23,7 +25,7 @@ public class BasicDriveTrain extends OpMode {
     private Servo assist;
     private Servo clamp;
     //private boolean isGrabberLocked = true;
-    private boolean isGrabberOpen = false;
+    private GrabberState grabberState = GrabberState.CLOSED;
 
     @Override
     public void init() {
@@ -41,28 +43,47 @@ public class BasicDriveTrain extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("isGrabberOpen", this.isGrabberOpen);
+        telemetry.addData("isGrabberOpen", this.grabberState);
         telemetry.update();
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
-        // grabber
-
+        // assist
         this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 0 : 0.65); // !this.isGrabberLocked
 
-        if (!this.isGrabberOpen && (this.gamepad2.dpad_left || this.gamepad1.dpad_left)) {
-            // open the grabber all the way
-            this.isGrabberOpen = true;
-            this.grabber.setPosition(1);
+        // grabber
+        if (this.grabberState.equals(GrabberState.CLOSED) && (gamepad2.right_bumper || gamepad1.right_bumper)) {
+            // we want to open it partially then
+            this.grabberState = GrabberState.PARTIAL;
         }
-        else if (this.isGrabberOpen && (this.gamepad2.dpad_right || this.gamepad1.dpad_right)) {
-            // close the grabber
-            this.isGrabberOpen = false;
-            this.grabber.setPosition(0.15);
+        else if (this.grabberState.equals(GrabberState.PARTIAL) && !(gamepad2.right_bumper || gamepad1.right_bumper)) {
+            // we want to close it by default then then
+            this.grabberState = GrabberState.CLOSED;
+        }
+        else if (gamepad2.dpad_left || gamepad1.dpad_left) {
+            // fully open the grabber
+            this.grabberState = GrabberState.OPEN;
+        }
+        else if (this.grabberState.equals(GrabberState.OPEN) && (gamepad2.dpad_right || gamepad1.dpad_right)) {
+            // close the grabber from the full position
+            this.grabberState = GrabberState.CLOSED;
+        }
+
+        // grabber servo enum controller switch
+        switch (this.grabberState) {
+            case OPEN:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_FULL_OPEN);
+                break;
+            case PARTIAL:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_PARTIAL_OPEN);
+                break;
+            case CLOSED:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                break;
         }
 
         // TODO: 11/25/2019 need to break this ternary out
-        this.grabber.setPosition(((gamepad1.right_bumper || gamepad2.right_bumper)) ? 0.25 : 0.15);
+        // this.grabber.setPosition(((gamepad1.right_bumper || gamepad2.right_bumper)) ? 0.25 : 0.15);
 
         // arm
         this.arm.setPower(gamepad2.left_stick_y * -0.5);
