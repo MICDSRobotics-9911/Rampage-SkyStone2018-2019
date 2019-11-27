@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
@@ -25,6 +26,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
     private Servo assist;
     private Servo clamp;
     private GrabberState grabberState = GrabberState.CLOSED;
+    private ClampState clampState = ClampState.UP;
 
     @Override
     public void init() {
@@ -94,6 +96,18 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
         this.elevator.setPower(-gamepad2.right_stick_y);
         /*this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
         this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);*/
+
+        // clamp
+        if (this.clampState.equals(ClampState.UP) && (gamepad2.dpad_down || gamepad1.dpad_down)) {
+            // close the clamp
+            this.clampState = ClampState.DOWN;
+        }
+        else if (this.clampState.equals(ClampState.DOWN) && (gamepad2.dpad_up || gamepad1.dpad_up)) {
+            // raise the clamp
+            this.clampState = ClampState.UP;
+        }
+
+        // clamp servo switch controller
 
         // stop
         if (gamepad1.right_bumper) {
