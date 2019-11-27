@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @TeleOp(name = "9911DT", group = "Basic")
-public class BasicDriveTrain extends OpMode implements TeleOpConstants {
+public class BasicDriveTrain extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -37,6 +38,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
         this.assist = hardwareMap.get(Servo.class, "assist");
+        this.clamp = hardwareMap.get(Servo.class, "clamp");
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -108,6 +110,14 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
         }
 
         // clamp servo switch controller
+        switch (this.clampState) {
+            case UP:
+                this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                break;
+            case DOWN:
+                this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                break;
+        }
 
         // stop
         if (gamepad1.right_bumper) {

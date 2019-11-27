@@ -21,7 +21,7 @@ public class Test extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
 
         }
 
@@ -33,4 +33,5 @@ public class Test extends LinearOpMode {
         this.clamp.setPosition(0); // down position
         sleep(5000);*/
     }
+}
 
