@@ -22,11 +22,10 @@ public class Test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
+            telemetry.addData("Distance (cm)", String.format(Locale.US,
+                    "%.02f", this.distanceSensor.getDistance(DistanceUnit.CM)));
+            telemetry.update();
         }
-
-        telemetry.addData("Distance (cm)", String.format(Locale.US,
-                "%.02f", this.distanceSensor.getDistance(DistanceUnit.CM)));
 
         /*this.clamp.setPosition(0.5); // up position
         sleep(5000);
