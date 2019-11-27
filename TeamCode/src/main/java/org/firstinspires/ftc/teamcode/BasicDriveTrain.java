@@ -8,18 +8,26 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
+import org.firstinspires.ftc.teamcode.lib.ClampState;
+import org.firstinspires.ftc.teamcode.lib.GrabberState;
+import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @TeleOp(name = "9911DT", group = "Basic")
-public class BasicDriveTrain extends OpMode {
+public class BasicDriveTrain extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
     private DcMotor arm;
     private DcMotor elevator;
     private Servo grabber;
+    private Servo assist;
+    private Servo clamp;
+    private GrabberState grabberState = GrabberState.CLOSED;
+    private ClampState clampState = ClampState.UP;
 
     @Override
     public void init() {
@@ -29,6 +37,8 @@ public class BasicDriveTrain extends OpMode {
         this.arm = hardwareMap.get(DcMotor.class, "arm");
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
+        this.assist = hardwareMap.get(Servo.class, "assist");
+        this.clamp = hardwareMap.get(Servo.class, "clamp");
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -36,16 +46,44 @@ public class BasicDriveTrain extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addData("isGrabberOpen", this.grabberState);
+        telemetry.update();
+
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
+        // assist
+        this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? TeleOpConstants.ASSIST_CLOSED : TeleOpConstants.ASSIST_OPEN);
+
         // grabber
-        this.grabber.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 1 : 0);
-        /*if (gamepad1.right_bumper) {
-            this.grabber.setPosition(1);
+        if (this.grabberState.equals(GrabberState.CLOSED) && (gamepad2.right_bumper || gamepad1.right_bumper)) {
+            // we want to open it partially then
+            this.grabberState = GrabberState.PARTIAL;
         }
-        else {
-            this.grabber.setPosition(0);
-        }*/
+        else if (this.grabberState.equals(GrabberState.PARTIAL) && !(gamepad2.right_bumper || gamepad1.right_bumper)) {
+            // we want to close it by default then then
+            this.grabberState = GrabberState.CLOSED;
+        }
+        else if (gamepad2.dpad_left || gamepad1.dpad_left) {
+            // fully open the grabber
+            this.grabberState = GrabberState.OPEN;
+        }
+        else if (this.grabberState.equals(GrabberState.OPEN) && (gamepad2.dpad_right || gamepad1.dpad_right)) {
+            // close the grabber from the full position
+            this.grabberState = GrabberState.CLOSED;
+        }
+
+        // grabber servo enum controller switch
+        switch (this.grabberState) {
+            case OPEN:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_FULL_OPEN);
+                break;
+            case PARTIAL:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_PARTIAL_OPEN);
+                break;
+            case CLOSED:
+                this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                break;
+        }
 
         // arm
         this.arm.setPower(gamepad2.left_stick_y * -0.5);
@@ -60,6 +98,26 @@ public class BasicDriveTrain extends OpMode {
         this.elevator.setPower(-gamepad2.right_stick_y);
         /*this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
         this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);*/
+
+        // clamp
+        if (this.clampState.equals(ClampState.UP) && (gamepad2.dpad_down || gamepad1.dpad_down)) {
+            // close the clamp
+            this.clampState = ClampState.DOWN;
+        }
+        else if (this.clampState.equals(ClampState.DOWN) && (gamepad2.dpad_up || gamepad1.dpad_up)) {
+            // raise the clamp
+            this.clampState = ClampState.UP;
+        }
+
+        // clamp servo switch controller
+        switch (this.clampState) {
+            case UP:
+                this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                break;
+            case DOWN:
+                this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                break;
+        }
 
         // stop
         if (gamepad1.right_bumper) {
