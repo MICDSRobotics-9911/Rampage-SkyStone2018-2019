@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomii;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,4 +33,4 @@ public class Test extends LinearOpMode {
         this.clamp.setPosition(0); // down position
         sleep(5000);*/
     }
-}
+
