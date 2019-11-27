@@ -24,7 +24,6 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
     private Servo grabber;
     private Servo assist;
     private Servo clamp;
-    //private boolean isGrabberLocked = true;
     private GrabberState grabberState = GrabberState.CLOSED;
 
     @Override
@@ -49,7 +48,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 
         // assist
-        this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? 0 : 0.65); // !this.isGrabberLocked
+        this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? TeleOpConstants.ASSIST_CLOSED : TeleOpConstants.ASSIST_OPEN);
 
         // grabber
         if (this.grabberState.equals(GrabberState.CLOSED) && (gamepad2.right_bumper || gamepad1.right_bumper)) {
@@ -81,9 +80,6 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants {
                 this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
                 break;
         }
-
-        // TODO: 11/25/2019 need to break this ternary out
-        // this.grabber.setPosition(((gamepad1.right_bumper || gamepad2.right_bumper)) ? 0.25 : 0.15);
 
         // arm
         this.arm.setPower(gamepad2.left_stick_y * -0.5);

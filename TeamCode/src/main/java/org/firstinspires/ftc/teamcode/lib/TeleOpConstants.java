@@ -9,7 +9,7 @@ public interface TeleOpConstants {
      */
     double GRABBER_PARTIAL_OPEN = 0.25;
     double GRABBER_FULL_OPEN = 1;
-    double GRABBER_CLOSED = 0.15;
+    double GRABBER_CLOSED = 0.1; // 0.15
 
     /**
      * Assist constants
@@ -17,5 +17,5 @@ public interface TeleOpConstants {
      * open = ready for a block
      */
     double ASSIST_CLOSED = 0;
-    double ASSIST_OPEN = 0.65;
+    double ASSIST_OPEN = 0.75; // 0.65
 }
