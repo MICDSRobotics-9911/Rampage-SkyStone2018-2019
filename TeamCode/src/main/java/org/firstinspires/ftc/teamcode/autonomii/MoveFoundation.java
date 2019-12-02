@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -29,7 +30,7 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
     private Servo clamp;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
-    private DistanceSensor frontDistance;
+    private DigitalChannel frontSwitch;
 
 
     private float hsvValues[] = {0F, 0F, 0F};
@@ -48,7 +49,7 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
         this.clamp = hardwareMap.get(Servo.class, "clamp");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
-        this.frontDistance = hardwareMap.get(DistanceSensor.class, "front_distance");
+        this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
 
         waitForStart();
 
@@ -89,20 +90,20 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(13, 27));
+                    sleep(TimeOffsetVoltage.calculateDistance(13, 35));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
                     // clamp the foundation
                     this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
-                    sleep(500);
+                    sleep(1000);
                     step++;
                     break;
                 case 4:
                     // move the foundation until the distance to wall is met
-                    if (this.frontDistance.getDistance(DistanceUnit.CM) > 7) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
+                    if (!this.frontSwitch.getState()) {
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     }
                     else {
                         this.mecanumDrive.stopMoving();
