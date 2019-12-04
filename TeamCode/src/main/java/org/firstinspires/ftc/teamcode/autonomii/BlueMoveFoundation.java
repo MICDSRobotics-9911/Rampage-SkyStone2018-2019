@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "MoveFoundation", group = "Generic")
-public class MoveFoundation extends LinearOpMode implements AutonomousConstants {
+@Autonomous(name = "BlueMoveFoundation", group = "Generic")
+public class BlueMoveFoundation extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
