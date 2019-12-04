@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomii;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,20 +14,18 @@ import java.util.Locale;
 @Autonomous(name = "Test")
 public class Test extends LinearOpMode {
     private Servo clamp;
-    private DistanceSensor distanceSensor;
+    private DigitalChannel frontSwitch;
 
     public void runOpMode() {
         this.clamp = hardwareMap.get(Servo.class, "clamp");
-        this.distanceSensor = hardwareMap.get(DistanceSensor.class, "front_distance");
+        this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
 
         waitForStart();
 
         while (opModeIsActive()) {
-
+            telemetry.addData("switch", this.frontSwitch.getState());
+            telemetry.update();
         }
-
-        telemetry.addData("Distance (cm)", String.format(Locale.US,
-                "%.02f", this.distanceSensor.getDistance(DistanceUnit.CM)));
 
         /*this.clamp.setPosition(0.5); // up position
         sleep(5000);
