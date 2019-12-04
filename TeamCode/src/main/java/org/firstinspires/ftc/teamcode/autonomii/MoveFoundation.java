@@ -31,6 +31,7 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
+    private double voltage;
 
 
     private float hsvValues[] = {0F, 0F, 0F};
@@ -50,6 +51,7 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
+        this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
 
         waitForStart();
 
@@ -90,7 +92,7 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(13, 35));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 35));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -102,18 +104,21 @@ public class MoveFoundation extends LinearOpMode implements AutonomousConstants 
                     break;
                 case 4:
                     // move the foundation until the distance to wall is met
-                    if (!this.frontSwitch.getState()) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    }
-                    else {
-                        this.mecanumDrive.stopMoving();
-                        step++;
-                    }
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, -0.15);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    this.mecanumDrive.stopMoving();
+                    // bump off the wall
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(100);
+                    this.mecanumDrive.stopMoving();
+                    step++;
                     break;
                 case 5:
-                    // move to the blue line
+                    // take clamp off and move to the blue line
+                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                    sleep(1300);
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(13, 40));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 210));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
