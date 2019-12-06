@@ -34,7 +34,7 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
 
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
-    private int step = 2;
+    private int step = 1;
 
     public void runOpMode() {
         // init
@@ -50,6 +50,12 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
+
+        // set motors to coast
+        this.mecanumDrive.getMajorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMajorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMinorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         waitForStart();
 
@@ -79,25 +85,21 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     this.step++;
                     break;
                 case 1:
-                    if (!this.touchSensorRight.isPressed()) {
-                        // keep moving
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
-                    }
-                    else {
-                        this.mecanumDrive.stopMoving();
-                        step++;
-                    }
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 160));
+                    this.mecanumDrive.stopMoving();
+                    step++;
                     break;
                 case 2:
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.65, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 80));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.6, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 90));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
                     // clamp the foundation
                     this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
-                    sleep(1000);
+                    sleep(1500);
                     step++;
                     break;
                 case 4:
@@ -115,8 +117,8 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     // take clamp off and move to the blue line
                     this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
                     sleep(1300);
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, -0.05);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 210));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, -0.005);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 260));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

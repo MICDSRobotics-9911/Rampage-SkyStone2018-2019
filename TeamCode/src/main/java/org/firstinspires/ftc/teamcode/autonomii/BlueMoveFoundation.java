@@ -92,14 +92,14 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 35));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 45));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
                     // clamp the foundation
                     this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
-                    sleep(1000);
+                    sleep(1500);
                     step++;
                     break;
                 case 4:
@@ -118,7 +118,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
                     sleep(1300);
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 210));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
