@@ -87,6 +87,9 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     }
                     else {
                         this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
+                        sleep(250);
+                        this.mecanumDrive.stopMoving();
                         step++;
                     }
                     break;

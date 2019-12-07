@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "RedMoveFoundation", group = "Generic")
-public class RedMoveFoundation extends LinearOpMode implements AutonomousConstants {
+@Autonomous(name = "RedMoveFoundationTriangle", group = "Generic")
+public class RedMoveFoundationTriangle extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -117,14 +117,7 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     step++;
                     break;
                 case 5:
-                    // take clamp off and move to the red line
                     this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
-                    sleep(1300);
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, -0.005);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 260));
-                    this.mecanumDrive.stopMoving();
-                    step++;
-                    break;
             }
         }
     }
