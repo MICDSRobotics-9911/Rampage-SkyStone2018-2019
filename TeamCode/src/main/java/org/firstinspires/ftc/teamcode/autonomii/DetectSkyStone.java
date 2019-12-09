@@ -100,7 +100,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
                 case 3:
                     // open the claw and grab the skystone
                     this.grabber.setPosition(0);
-                    sleep(1500);
+                    sleep(1000);
                     //this.grabber.setPosition(0.5);
                     step++;
                     break;
@@ -125,11 +125,11 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
                 case 6:
                     // move forwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(14.4, 55));
+                    sleep(TimeOffsetVoltage.calculateDistance(14.4, 37));
                     this.mecanumDrive.stopMoving();
                     // down the clamp
                     this.clamp.setPosition(0);
-                    sleep(500);
+                    sleep(333);
                     this.step++;
                     break;
                 case 7:

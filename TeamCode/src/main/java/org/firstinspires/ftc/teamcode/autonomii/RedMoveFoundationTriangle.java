@@ -80,39 +80,39 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(500);
+                    sleep(333);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
                 case 1:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 160));
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 107));
                     this.mecanumDrive.stopMoving();
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
-                    sleep(500);
+                    sleep(333);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.5, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 100));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 67));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
                     // clamp the foundation
                     this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
-                    sleep(1500);
+                    sleep(1000);
                     step++;
                     break;
                 case 4:
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0.1);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 130));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 87));
                     this.mecanumDrive.stopMoving();
                     // bump off the wall
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+                    sleep(67);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

@@ -74,7 +74,7 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(500);
+                    sleep(333);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
@@ -86,31 +86,31 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     else {
                         this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                        sleep(250);
+                        sleep(167);
                         this.mecanumDrive.stopMoving();
                         step++;
                     }
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 45));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 30));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
                     // clamp the foundation
                     this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
-                    sleep(1500);
+                    sleep(1000);
                     step++;
                     break;
                 case 4:
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, -0.15);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 80));
                     this.mecanumDrive.stopMoving();
                     // bump off the wall
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+                    sleep(67);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
