@@ -76,7 +76,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(500);
+                    sleep(501);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
