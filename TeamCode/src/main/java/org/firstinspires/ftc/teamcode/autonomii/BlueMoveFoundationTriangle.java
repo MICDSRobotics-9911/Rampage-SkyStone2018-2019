@@ -25,7 +25,8 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
     private DcMotor elevator;
     private Servo grabber;
     private Servo assist;
-    private Servo clamp;
+    private Servo clampLeft;
+    private Servo clampRight;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
@@ -45,7 +46,8 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
         this.assist = hardwareMap.get(Servo.class, "assist");
-        this.clamp = hardwareMap.get(Servo.class, "clamp");
+        this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
+        this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
@@ -98,8 +100,8 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     step++;
                     break;
                 case 3:
-                    // clamp the foundation
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                    // clampLeft the foundation
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_DOWN);
                     sleep(1500);
                     step++;
                     break;
@@ -115,8 +117,8 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     step++;
                     break;
                 case 5:
-                    // take clamp off and move to the blue line
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                    // take clampLeft off and move to the blue line
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_UP);
             }
         }
     }
