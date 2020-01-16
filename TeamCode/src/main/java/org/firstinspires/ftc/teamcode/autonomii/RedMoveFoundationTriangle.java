@@ -103,7 +103,8 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     break;
                 case 3:
                     // clampLeft the foundation
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_DOWN);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
                     step++;
                     break;
@@ -119,7 +120,8 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case 5:
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_UP);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
             }
         }
     }

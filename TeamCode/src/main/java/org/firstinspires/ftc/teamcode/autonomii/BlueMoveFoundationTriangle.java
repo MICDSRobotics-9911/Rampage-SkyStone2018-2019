@@ -100,8 +100,9 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     step++;
                     break;
                 case 3:
-                    // clampLeft the foundation
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_DOWN);
+                    // clamp the foundation
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
                     step++;
                     break;
@@ -118,7 +119,8 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     break;
                 case 5:
                     // take clampLeft off and move to the blue line
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_UP);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
             }
         }
     }
