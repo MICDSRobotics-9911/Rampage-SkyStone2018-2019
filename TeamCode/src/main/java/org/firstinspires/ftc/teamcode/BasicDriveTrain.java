@@ -115,10 +115,12 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         // clamp servo switch controller
         switch (this.clampState) {
             case UP:
-                this.clampLeft.setPosition(AutonomousConstants.CLAMP_UP);
+                this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
                 break;
             case DOWN:
-                this.clampLeft.setPosition(AutonomousConstants.CLAMP_DOWN);
+                this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                 break;
         }
 
