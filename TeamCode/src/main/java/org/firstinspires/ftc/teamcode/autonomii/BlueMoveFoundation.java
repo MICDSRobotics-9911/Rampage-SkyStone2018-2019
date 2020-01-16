@@ -7,11 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
@@ -27,7 +25,8 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
     private DcMotor elevator;
     private Servo grabber;
     private Servo assist;
-    private Servo clamp;
+    private Servo clampLeft;
+    private Servo clampRight;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
@@ -47,7 +46,8 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
         this.assist = hardwareMap.get(Servo.class, "assist");
-        this.clamp = hardwareMap.get(Servo.class, "clamp");
+        this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
+        this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
@@ -101,7 +101,8 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     break;
                 case 3:
                     // clamp the foundation
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
                     step++;
                     break;
@@ -118,7 +119,8 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     break;
                 case 5:
                     // take clamp off and move to the blue line
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
                     sleep(1300);
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));

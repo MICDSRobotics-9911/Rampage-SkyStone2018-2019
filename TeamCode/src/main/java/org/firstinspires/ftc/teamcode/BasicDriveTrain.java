@@ -25,7 +25,8 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     private DcMotor elevator;
     private Servo grabber;
     private Servo assist;
-    private Servo clamp;
+    private Servo clampLeft;
+    private Servo clampRight;
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
 
@@ -38,7 +39,9 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
         this.assist = hardwareMap.get(Servo.class, "assist");
-        this.clamp = hardwareMap.get(Servo.class, "clamp");
+        this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
+        this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
+
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -112,10 +115,12 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         // clamp servo switch controller
         switch (this.clampState) {
             case UP:
-                this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
                 break;
             case DOWN:
-                this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                 break;
         }
 

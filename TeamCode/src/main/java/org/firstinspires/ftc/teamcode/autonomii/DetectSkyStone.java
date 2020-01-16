@@ -71,7 +71,7 @@ public class DetectSkyStone extends LinearOpMode implements AutonomousConstants 
 
             switch (step) {
                 case 0:
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                    this.clamp.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
                     // TODO: 11/18/2019 check to see if we've hit the depot wall using another color sensor
                     if ((((int) this.hsvValues[0]) < 85)) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);

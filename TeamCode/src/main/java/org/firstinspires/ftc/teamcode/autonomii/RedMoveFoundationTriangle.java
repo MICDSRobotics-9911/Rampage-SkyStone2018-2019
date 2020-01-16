@@ -25,7 +25,8 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
     private DcMotor elevator;
     private Servo grabber;
     private Servo assist;
-    private Servo clamp;
+    private Servo clampLeft;
+    private Servo clampRight;
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
@@ -45,7 +46,8 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
         this.assist = hardwareMap.get(Servo.class, "assist");
-        this.clamp = hardwareMap.get(Servo.class, "clamp");
+        this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
+        this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
@@ -100,8 +102,9 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case 3:
-                    // clamp the foundation
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_DOWN);
+                    // clampLeft the foundation
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
                     step++;
                     break;
@@ -117,7 +120,8 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case 5:
-                    this.clamp.setPosition(AutonomousConstants.CLAMP_UP);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
             }
         }
     }
