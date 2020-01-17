@@ -11,11 +11,11 @@ public interface AutonomousConstants {
      */
     int ARM_DROP_DISTANCE = 1500;
 
-    double CLAMP_RIGHT_UP = 0.1;
-    double CLAMP_LEFT_UP = 0.5;
+    double CLAMP_RIGHT_UP = 0.5;
+    double CLAMP_LEFT_UP = 0.4;
 
-    double CLAMP_LEFT_DOWN = 0.1;
-    double CLAMP_RIGHT_DOWN = 0.5; // good
+    double CLAMP_LEFT_DOWN = 0;
+    double CLAMP_RIGHT_DOWN = 0.8; // good
 
     double DISTANCE_TO_WALL_FROM_FOUNDATION = 20;
 }

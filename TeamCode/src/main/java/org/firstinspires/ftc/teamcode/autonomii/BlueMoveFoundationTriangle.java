@@ -88,14 +88,18 @@ public class BlueMoveFoundationTriangle extends LinearOpMode implements Autonomo
                     else {
                         this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                        sleep(250);
+                        sleep(750);
                         this.mecanumDrive.stopMoving();
                         step++;
                     }
                     break;
                 case 2:
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 45));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.7, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 50));
+                    //this.mecanumDrive.stopMoving();
+                    // then slow down
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.45, 0);
+                    sleep(1000);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

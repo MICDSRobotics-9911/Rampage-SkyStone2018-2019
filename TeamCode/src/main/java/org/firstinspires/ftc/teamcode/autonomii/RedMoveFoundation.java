@@ -98,6 +98,8 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.5, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 100));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.45, 0);
+                    sleep(1000);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

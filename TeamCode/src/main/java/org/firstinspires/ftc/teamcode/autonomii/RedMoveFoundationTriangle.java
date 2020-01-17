@@ -97,12 +97,14 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.5, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 100));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 55));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.4, 0);
+                    sleep(750);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 3:
-                    // clampLeft the foundation
+                    // clamp the foundation
                     this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
                     this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
