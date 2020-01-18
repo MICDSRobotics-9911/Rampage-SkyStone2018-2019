@@ -121,7 +121,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     this.mecanumDrive.stopMoving();
                     // bump off the wall
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+                    sleep(115);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
