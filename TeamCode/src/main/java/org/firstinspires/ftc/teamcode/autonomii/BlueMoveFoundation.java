@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @Autonomous(name = "BlueMoveFoundation", group = "Generic")
@@ -31,7 +32,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
     private double voltage;
-
+    private MotorPair intake;
 
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
@@ -52,6 +53,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
+        this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
 
         waitForStart();
 
@@ -78,6 +80,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
                     sleep(500);
                     this.mecanumDrive.stopMoving();
+
                     this.step++;
                     break;
                 case 1:
@@ -105,6 +108,7 @@ public class BlueMoveFoundation extends LinearOpMode implements AutonomousConsta
                     break;
                 case 3:
                     // clamp the foundation
+
                     this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
                     this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
                     sleep(1500);
