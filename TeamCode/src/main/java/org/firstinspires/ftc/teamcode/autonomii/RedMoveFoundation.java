@@ -91,7 +91,7 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     sleep(TimeOffsetVoltage.calculateDistance(voltage, 160));
                     this.mecanumDrive.stopMoving();
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
-                    sleep(500);
+                    sleep(1100);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -99,7 +99,7 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.5, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 100));
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.45, 0);
-                    sleep(1000);
+                    sleep(550);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -113,11 +113,11 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                 case 4:
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0.1);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 130));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 135));
                     this.mecanumDrive.stopMoving();
                     // bump off the wall
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+                    sleep(190);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -125,8 +125,8 @@ public class RedMoveFoundation extends LinearOpMode implements AutonomousConstan
                     // take clamp off and move to the red line
                     this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
                     this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    sleep(1300);
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, -0.005);
+                    sleep(1400);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, -0.015);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 260));
                     this.mecanumDrive.stopMoving();
                     step++;
