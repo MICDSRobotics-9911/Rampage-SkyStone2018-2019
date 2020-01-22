@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
 
-@Autonomous(name = "BlueMoveFoundation", group = "Generic")
+@Autonomous(name = "TESTBlueFull", group = "Generic")
 public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private Robot robot;
@@ -40,7 +40,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
-    private int step = 0;
+    private int step = -5;
 
     public void runOpMode() {
         // init
@@ -80,17 +80,24 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
             switch (step) {
                 // TODO: may have to implement code for purging our capstone (orange block)
+
                 // first we have to approach the stones
                 case -5:
+
+                    this.intake.getMotor1().setPower(1);
+                    this.intake.getMotor2().setPower(-1);
+
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 85)); // TODO: adjust first distance to the skystones
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 53)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
                     // we should now be in position to start scanning the bricks
                     step++;
                     break;
                 case -4:
                     // start going down the line, scanning for skystones
-                    if ((((int) this.hsvValues[0]) < 85)) {
+                    this.intake.getMotor1().setPower(0);
+                    this.intake.getMotor2().setPower(0);
+                    if ((((int) this.hsvValues[0]) < 60)) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
                     } else {
                         // found a skystone (hopefully, anyway)
@@ -102,7 +109,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     // move backwards, so we clear the main skybridge
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
                     // TODO: 11/18/2019 implement voltage sensor
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 38)); // TODO: make sure this value puts the robot away from the skybridge
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 8)); // TODO: make sure this value puts the robot away from the skybridge
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

@@ -9,7 +9,7 @@ public interface AutonomousConstants {
     /**
      * Sleep time (in miliseconds) for the arm to swing over the back of the robot
      */
-    int ARM_DROP_DISTANCE = 1500;
+    int ARM_DROP_DISTANCE = 3000;
 
     double CLAMP_RIGHT_UP = 0.25;
     double CLAMP_LEFT_UP = 0.90;

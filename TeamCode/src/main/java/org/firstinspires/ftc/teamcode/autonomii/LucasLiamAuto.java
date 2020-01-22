@@ -1,0 +1,166 @@
+package org.firstinspires.ftc.teamcode.autonomii;
+
+import android.graphics.Color;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
+import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
+import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
+
+import java.util.concurrent.TimeoutException;
+
+@Autonomous(name = "LucasAuto", group = "Generic")
+public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
+
+    private Robot robot;
+    private MecanumDrive mecanumDrive;
+    private ColorSensor colorSensor;
+    private DcMotor arm;
+    private DcMotor elevator;
+    private Servo grabber;
+    private Servo assist;
+    private Servo clampLeft;
+    private Servo clampRight;
+    private TouchSensor touchSensorLeft;
+    private TouchSensor touchSensorRight;
+    private DigitalChannel frontSwitch;
+    private double voltage;
+    private MotorPair intake;
+
+    private float hsvValues[] = {0F, 0F, 0F};
+    private final double SCALE_FACTOR = 355;
+    private int step = 0;
+
+    public void runOpMode() {
+        // init
+        this.robot = new Robot(hardwareMap);
+        this.mecanumDrive = (MecanumDrive) this.robot.getDrivetrain();
+        this.colorSensor = hardwareMap.get(ColorSensor.class, "c1");
+        this.arm = hardwareMap.get(DcMotor.class, "arm");
+        this.elevator = hardwareMap.get(DcMotor.class, "elevator");
+        this.grabber = hardwareMap.get(Servo.class, "grabber");
+        this.assist = hardwareMap.get(Servo.class, "assist");
+        this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
+        this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
+        this.touchSensorLeft = hardwareMap.get(TouchSensor.class, "left_touch");
+        this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
+        this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
+        this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
+        this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
+
+        waitForStart();
+
+
+        while (opModeIsActive()) {
+            // update colors
+            Color.RGBToHSV((int) (colorSensor.red() * this.SCALE_FACTOR),
+                    (int) (colorSensor.green() * this.SCALE_FACTOR),
+                    (int) (colorSensor.blue() * this.SCALE_FACTOR),
+                    this.hsvValues
+            );
+
+
+            telemetry.addData("Step", this.step);
+            telemetry.addData("Red", this.hsvValues[0]);
+            telemetry.addData("Green", this.hsvValues[1]);
+            telemetry.addData("Blue", this.hsvValues[2]);
+            telemetry.addData("Alpha", this.colorSensor.alpha());
+            telemetry.update();
+
+            switch (step) {
+                // TODO: may have to implement code for purging our capstone (orange block)
+
+                // first we have to approach the stones
+                case 0:
+                    this.assist.setPosition(0.75);
+                    this.intake.getMotor1().setPower(0);
+                    this.intake.getMotor2().setPower(0);
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 53));
+                    this.mecanumDrive.stopMoving();
+                    // we should now be in position to start scanning the bricks
+                    step++;
+                    break;
+
+                case 1:
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(1300);
+                    this.mecanumDrive.stopMoving();
+                    /*
+                    if(!(((int) this.hsvValues[0]) < 85)){
+                        this.mecanumDrive.stopMoving();
+                        step++;
+                    }
+
+                      */
+
+                    step++;
+                    break;
+
+                case 2:
+
+                    this.intake.getMotor1().setPower(-1.0);
+                    this.intake.getMotor2().setPower(1.0);
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.3, 0);
+                    sleep(500);
+
+                    this.intake.getMotor1().setPower(0.0);
+                    this.intake.getMotor2().setPower(0.0);
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.4, 0);
+                    sleep(1000);
+
+                    this.intake.getMotor1().setPower(-1);
+                    this.intake.getMotor2().setPower(1.0);
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.6, 0);
+                    sleep(500);
+
+                    this.intake.getMotor1().setPower(1);
+                    this.intake.getMotor2().setPower(1.0);
+
+
+                    this.mecanumDrive.stopMoving();
+                    this.intake.getMotor1().setPower(-1.0);
+                    this.intake.getMotor2().setPower(1.0);
+                    sleep(1600);
+                    step++;
+                    break;
+
+                case 3:
+                    this.intake.getMotor1().setPower(0);
+                    this.intake.getMotor2().setPower(0);
+                    this.mecanumDrive.stopMoving();
+
+
+
+
+                    }
+
+
+
+            }
+
+
+
+            }
+        }
+
+

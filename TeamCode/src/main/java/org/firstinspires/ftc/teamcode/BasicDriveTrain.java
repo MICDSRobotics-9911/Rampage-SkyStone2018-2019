@@ -89,7 +89,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         }
 
         // arm
-        this.arm.setPower(gamepad2.left_stick_y * -0.5);
+        this.arm.setPower(gamepad2.left_stick_y * 0.5);
 
         // intake
         this.intake.getMotor1().setPower((this.intake.getMotor1().getPower() == 0) && (gamepad1.x || gamepad2.x) ? 1 : 0);
