@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
@@ -35,6 +36,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
+    private IMUWrapper imuWrapper;
     private double voltage;
     private MotorPair intake;
 
@@ -58,6 +60,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
+        this.imuWrapper = new IMUWrapper(hardwareMap);
 
         waitForStart();
 
@@ -145,7 +148,8 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     // the next step will be to start putting the foundation in the right spot
                     if (!this.touchSensorRight.isPressed()) {
                         // keep moving
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
+                        float angle = this.imuWrapper.getIMU().getAngularOrientation().firstAngle;
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, (angle > 90) ? 0.01 : (angle < 90) ? -0.01 : 0); // TODO: may need to change the sign
                     }
                     else {
                         this.mecanumDrive.stopMoving();
