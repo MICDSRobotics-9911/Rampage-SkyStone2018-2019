@@ -84,11 +84,11 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                 // first we have to approach the stones
                 case -5:
 
-                    this.intake.getMotor1().setPower(1);
-                    this.intake.getMotor2().setPower(-1);
+                    /*this.intake.getMotor1().setPower(1);
+                    this.intake.getMotor2().setPower(-1);*/
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 53)); // TODO: adjust first distance to the skystones
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 49)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
                     // we should now be in position to start scanning the bricks
                     step++;
@@ -97,7 +97,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     // start going down the line, scanning for skystones
                     this.intake.getMotor1().setPower(0);
                     this.intake.getMotor2().setPower(0);
-                    if ((((int) this.hsvValues[0]) < 60)) {
+                    if ((((int) this.hsvValues[0]) < 85)) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
                     } else {
                         // found a skystone (hopefully, anyway)
@@ -109,7 +109,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     // move backwards, so we clear the main skybridge
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
                     // TODO: 11/18/2019 implement voltage sensor
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 8)); // TODO: make sure this value puts the robot away from the skybridge
+                    sleep(250); // TODO: make sure this value puts the robot away from the skybridge
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -118,21 +118,26 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.arm.setPower(-0.5);
                     sleep(AutonomousConstants.ARM_DROP_DISTANCE); // if you want to change this, make sure you change it in AutonomousConstants
                     this.arm.setPower(0);
+                    sleep(300);
                     step++;
                     break;
                 case -1:
                     // open the claw and grab the skystone
-                    this.grabber.setPosition(TeleOpConstants.GRABBER_PARTIAL_OPEN);
-                    this.assist.setPosition(TeleOpConstants.ASSIST_CLOSED);
-                    sleep(1500);
                     this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                    this.assist.setPosition(0.1); // 'u' is the assist
+                    sleep(150);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(200);
+                    this.mecanumDrive.stopMoving();
+                    this.assist.setPosition(1);
+                    sleep(1300);
                     step++;
                     break;
                 case 0:
                     // move arm back up a bit
                     this.arm.setPower(1);
-                    sleep(AutonomousConstants.ARM_DROP_DISTANCE);
-                    this.arm.setPower(0);
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
+                    this.arm.setPower(0.01);
                     step++;
                     break;
                 case 1:
