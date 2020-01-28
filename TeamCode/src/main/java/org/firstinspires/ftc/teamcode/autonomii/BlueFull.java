@@ -62,6 +62,12 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
 
+        // brakes!
+        this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMinorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMajorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMajorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         waitForStart();
 
 
@@ -141,33 +147,55 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.arm.setPower(1);
                     sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                     this.arm.setPower(0.01);
+
+                    // move backwards
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(400);
+                    this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 1:
                     // start translating to the other side of the field
                     // the next step will be to start putting the foundation in the right spot
-                    if (!this.touchSensorRight.isPressed()) {
-                        // keep moving
-                        float angle = this.imuWrapper.getIMU().getAngularOrientation().firstAngle;
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, (angle > 90) ? 0.01 : (angle < 90) ? -0.01 : 0); // TODO: may need to change the sign
+                    this.imuWrapper.updateAngles();
+                    sleep(1); // just so we don't burn a hole in the CPU :)
+                    float angle = this.imuWrapper.getHeading();
+                    if (angle >= -82) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.5); // TODO: may need to change the sign
                     }
                     else {
-                        this.mecanumDrive.stopMoving();
+                        // start moving towards the wall and hit the wall
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                        sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        sleep(500);
+                        // rotate back, but we'll do that in the next step
+
+                        /*this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
                         sleep(250);
-                        this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.stopMoving();*/
                         step++;
                     }
                     break;
                 case 2:
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.7, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 50));
-                    //this.mecanumDrive.stopMoving();
-                    // then slow down
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.45, 0);
-                    sleep(1000);
-                    this.mecanumDrive.stopMoving();
-                    step++;
+                    this.imuWrapper.updateAngles();
+                    sleep(1);
+                    float angles = this.imuWrapper.getHeading();
+                    if (angles <= 0) { // '0' degrees
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, 0.5);
+                    }
+                    else {
+                        this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.7, 0);
+                        sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 50));
+                        //this.mecanumDrive.stopMoving();
+                        // then slow down
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.45, 0);
+                        sleep(1000);
+                        this.mecanumDrive.stopMoving();
+                        step++;
+                    }
                     break;
                 case 3:
                     // clamp the foundation
