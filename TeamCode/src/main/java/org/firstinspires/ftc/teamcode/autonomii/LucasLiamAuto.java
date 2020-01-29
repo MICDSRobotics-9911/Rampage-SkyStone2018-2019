@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -11,13 +12,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
+import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "BlueGoToLineFromTriangle", group = "Blue")
-public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
+import java.util.concurrent.TimeoutException;
+
+@Autonomous(name = "LucasAuto", group = "Generic")
+public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -75,30 +79,88 @@ public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
             telemetry.update();
 
             switch (step) {
+                // TODO: may have to implement code for purging our capstone (orange block)
 
-
-
-
-
+                // first we have to approach the stones
                 case 0:
-                    // take clamp off and move to the blue line
+                    this.assist.setPosition(0.75);
+                    this.intake.getMotor1().setPower(0);
+                    this.intake.getMotor2().setPower(0);
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 53));
                     this.mecanumDrive.stopMoving();
+                    // we should now be in position to start scanning the bricks
                     step++;
                     break;
 
                 case 1:
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0.002);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(1300);
                     this.mecanumDrive.stopMoving();
+                    /*
+                    if(!(((int) this.hsvValues[0]) < 85)){
+                        this.mecanumDrive.stopMoving();
+                        step++;
+                    }
+
+                      */
+
                     step++;
                     break;
+
+                case 2:
+
+                    this.intake.getMotor1().setPower(-1.0);
+                    this.intake.getMotor2().setPower(1.0);
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.3, 0);
+                    sleep(500);
+
+                    this.intake.getMotor1().setPower(0.0);
+                    this.intake.getMotor2().setPower(0.0);
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.4, 0);
+                    sleep(1000);
+
+                    this.intake.getMotor1().setPower(-1);
+                    this.intake.getMotor2().setPower(1.0);
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.6, 0);
+                    sleep(500);
+
+                    this.intake.getMotor1().setPower(1);
+                    this.intake.getMotor2().setPower(1.0);
+
+
+                    this.mecanumDrive.stopMoving();
+                    this.intake.getMotor1().setPower(-1.0);
+                    this.intake.getMotor2().setPower(1.0);
+                    sleep(1600);
+                    step++;
+                    break;
+
+                case 3:
+                    this.intake.getMotor1().setPower(0);
+                    this.intake.getMotor2().setPower(0);
+                    this.mecanumDrive.stopMoving();
+
+
+
+
+                    }
+
+
+
+            }
+
+
+
             }
         }
-    }
-}
+
+
