@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "BlueGoToLineFromTriangle", group = "Generic")
+@Autonomous(name = "BlueGoToLineFromTriangle", group = "Blue")
 public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;

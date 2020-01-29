@@ -4,7 +4,6 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -19,10 +18,8 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-import java.util.concurrent.TimeoutException;
-
-@Autonomous(name = "BlueAlmostFull", group = "Blue")
-public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
+@Autonomous(name = "RedAlmostFull", group = "Red")
+public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -97,7 +94,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.intake.getMotor2().setPower(-1);*/
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 49)); // TODO: adjust first distance to the skystones
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 52)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
                     // we should now be in position to start scanning the bricks
                     step++;
@@ -107,7 +104,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.intake.getMotor1().setPower(0);
                     this.intake.getMotor2().setPower(0);
                     if ((((int) this.hsvValues[0]) < 85)) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, 0);
                     } else {
                         // found a skystone (hopefully, anyway)
                         this.mecanumDrive.stopMoving();
@@ -115,11 +112,12 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     }
                     break;
                 case -3:
+                    /*
                     // move backwards, so we clear the main skybridge
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
-                    // TODO: 11/18/2019 implement voltage sensor
-                    sleep(250); // TODO: make sure this value puts the robot away from the skybridge
+                    sleep(150);
                     this.mecanumDrive.stopMoving();
+                    */
                     step++;
                     break;
                 case -2:
@@ -160,15 +158,15 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.imuWrapper.updateAngles();
                     sleep(1); // just so we don't burn a hole in the CPU :)
                     float angle = this.imuWrapper.getHeading();
-                    if (angle >= -82) { // !this.touchSensorRight.isPressed()
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4); // TODO: may need to change the sign
+                    if (angle <= 77) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
                     }
                     else {
                         // start moving towards the wall and hit the wall
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                         sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        sleep(100);
+                        sleep(200);
                         this.mecanumDrive.stopMoving();
                         this.arm.setPower(1);
                         sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
@@ -186,8 +184,8 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.imuWrapper.updateAngles();
                     sleep(1);
                     float angles = this.imuWrapper.getHeading();
-                    if (angles <= -5) { // '0' degrees
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, 0.4);
+                    if (angles >= 0) { // '0' degrees
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, -0.4);
                     }
                     else {
                         this.mecanumDrive.stopMoving();
@@ -219,10 +217,11 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                 case 5:
                     // take clamps off the foundation
                     this.arm.setPower(1);
-                    sleep(100);
-                    this.arm.setPower(0.01);
+                    sleep(500);
+                    this.arm.setPower(0);
                     this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
                     this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    step++;
 
                     /*
                     // bump off the wall

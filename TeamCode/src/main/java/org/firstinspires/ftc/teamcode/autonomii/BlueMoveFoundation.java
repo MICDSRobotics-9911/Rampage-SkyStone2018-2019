@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "BlueMoveFoundation", group = "Generic")
+@Autonomous(name = "BlueMoveFoundation", group = "Blue")
 public class BlueMoveFoundation extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
