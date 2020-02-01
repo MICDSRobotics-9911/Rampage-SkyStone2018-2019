@@ -94,7 +94,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.intake.getMotor2().setPower(-1);*/
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 46)); // TODO: adjust first distance to the skystones
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 52)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
                     // we should now be in position to start scanning the bricks
                     step++;
@@ -104,7 +104,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.intake.getMotor1().setPower(0);
                     this.intake.getMotor2().setPower(0);
                     if ((((int) this.hsvValues[0]) < 85)) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, 0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0.05);
                     } else {
                         // found a skystone (hopefully, anyway)
                         this.mecanumDrive.stopMoving();
@@ -208,9 +208,13 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.arm.setPower(0);
                     break;
                 case 4:
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(750);
+                    this.mecanumDrive.stopMoving();
+
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 115));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
