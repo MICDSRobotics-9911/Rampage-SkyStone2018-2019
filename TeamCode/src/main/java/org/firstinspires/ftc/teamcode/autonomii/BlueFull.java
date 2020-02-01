@@ -223,6 +223,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.arm.setPower(0.01);
                     this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
                     this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    step ++;
 
                     /*
                     // bump off the wall
