@@ -208,6 +208,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.arm.setPower(0);
                     break;
                 case 4:
+                    // translate before we pull back
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
                     sleep(750);
                     this.mecanumDrive.stopMoving();

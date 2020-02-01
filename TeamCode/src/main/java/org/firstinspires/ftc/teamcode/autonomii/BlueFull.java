@@ -210,6 +210,11 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.arm.setPower(0);
                     break;
                 case 4:
+                    // translate before we pull back
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); // TODO: idk if this is right or left
+                    sleep(750);
+                    this.mecanumDrive.stopMoving();
+
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
