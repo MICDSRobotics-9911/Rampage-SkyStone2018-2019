@@ -94,7 +94,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.intake.getMotor2().setPower(-1);*/
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 52)); // TODO: adjust first distance to the skystones
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 46)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
                     // we should now be in position to start scanning the bricks
                     step++;
@@ -148,7 +148,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(450);
+                    sleep(600);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -190,7 +190,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     else {
                         this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.55, 0);
-                        sleep(1800);
+                        sleep(1900);
                         this.mecanumDrive.stopMoving();
                         step++;
                     }
