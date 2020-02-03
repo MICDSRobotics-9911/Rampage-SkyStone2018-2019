@@ -21,6 +21,9 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
 
+
+//Baz, if u can see this then you are good to work for the rest of the evening
+
 @Autonomous(name = "BlueAlmostFull", group = "Blue")
 public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
