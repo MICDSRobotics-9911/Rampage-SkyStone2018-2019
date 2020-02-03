@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 
 //Baz, if u can see this then you are good to work for the rest of the evening
+//these comments should appear on your version of the code
 
 @Autonomous(name = "BlueAlmostFull", group = "Blue")
 public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
