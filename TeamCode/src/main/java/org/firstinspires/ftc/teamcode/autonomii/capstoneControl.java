@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
+@Autonomous(name = "capstoneControl", group = "Generic")
 public class capstoneControl extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private MotorPair intake;
