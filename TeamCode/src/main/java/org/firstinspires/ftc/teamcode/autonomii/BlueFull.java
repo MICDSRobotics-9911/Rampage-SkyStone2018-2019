@@ -183,6 +183,10 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                         this.assist.setPosition(1);
                         sleep(1300);
 
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
+                        this.sleep(250);
+                        this.mecanumDrive.stopMoving();
+
 
                     }
 
