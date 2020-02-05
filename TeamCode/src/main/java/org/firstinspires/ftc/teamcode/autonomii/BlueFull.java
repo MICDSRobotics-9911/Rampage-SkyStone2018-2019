@@ -156,6 +156,39 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(450);
                     this.mecanumDrive.stopMoving();
+
+                    // implement double check
+
+                    if (!(((int) this.hsvValues[0]) < 85)) {
+
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        this.arm.setPower(0.3);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        this.sleep(300);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
+                        this.sleep(300);
+                        this.mecanumDrive.stopMoving();
+                        this.arm.setPower(-0.5);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        sleep(300);
+                        this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        sleep(150);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        sleep(200);
+                        this.mecanumDrive.stopMoving();
+                        this.assist.setPosition(1);
+                        sleep(1300);
+
+
+                    }
+
+
+
+
                     step++;
                     break;
                 case 1:

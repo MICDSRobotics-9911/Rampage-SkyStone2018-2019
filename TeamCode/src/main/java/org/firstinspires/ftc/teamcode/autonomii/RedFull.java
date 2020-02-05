@@ -37,6 +37,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
     private double voltage;
     private MotorPair intake;
 
+
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
     private int step = -5;
@@ -58,6 +59,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
+
 
         // brakes!
         this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -101,8 +103,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     break;
                 case -4:
                     // start going down the line, scanning for skystones
-                    this.intake.getMotor1().setPower(0);
-                    this.intake.getMotor2().setPower(0);
+
                     if ((((int) this.hsvValues[0]) < 85)) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0.05);
                     } else {
@@ -138,6 +139,8 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.mecanumDrive.stopMoving();
                     this.assist.setPosition(1);
                     sleep(1300);
+
+
                     step++;
                     break;
                 case 0:
@@ -145,6 +148,33 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.arm.setPower(1);
                     sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                     this.arm.setPower(0.01);
+
+                    // implement double check
+
+                    if (!(((int) this.hsvValues[0]) < 85)) {
+
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        this.arm.setPower(0.3);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                        this.sleep(300);
+                        this.mecanumDrive.stopMoving();
+                        this.arm.setPower(-0.5);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        sleep(300);
+                        this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        sleep(150);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        sleep(200);
+                        this.mecanumDrive.stopMoving();
+                        this.assist.setPosition(1);
+                        sleep(1300);
+
+
+                    }
 
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
@@ -166,7 +196,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                         sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        sleep(200);
+                        sleep(210);
                         this.mecanumDrive.stopMoving();
                         this.arm.setPower(1);
                         sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
