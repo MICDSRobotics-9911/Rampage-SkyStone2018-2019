@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.teamcode.autonomii.perceptron.SSPPoint;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
@@ -16,6 +21,9 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp(name = "DataFetcher", group = "Basic")
 public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousConstants {
@@ -31,6 +39,10 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
     private IMUWrapper imuWrapper;
+    private IntegratingGyroscope gyro;
+    private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+    private AngularVelocity rates;
+    private List<SSPPoint> dataPoints = new ArrayList<>();
 
     @Override
     public void init() {
@@ -56,10 +68,11 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
 
     @Override
     public void loop() {
-        this.imuWrapper.updateAngles();
+        //this.imuWrapper.updateAngles();
         /*telemetry.addData("Acceleration", this.imuWrapper.getIMU().getAcceleration());
         telemetry.addData("Heading", this.imuWrapper.getHeading());*/
-        Log.i("[DF]", accelerationMagnitiude(this.imuWrapper.getIMU().getAcceleration()) + "," + this.imuWrapper.getHeading());
+        //Log.i("[DF]", accelerationMagnitiude(this.imuWrapper.getIMU().getAcceleration()) + "," + this.imuWrapper.getHeading());
+        //this.dataPoints.add(new SSPPoint(this.deltaAngleMagnititude(), this.imuWrapper.getHeading()));
         telemetry.addData("isGrabberOpen", this.grabberState);
         telemetry.update();
 
@@ -143,5 +156,10 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
             this.arm.setPower(0);
             this.elevator.setPower(0);
         }
+    }
+
+    public float deltaAngleMagnititude() {
+        AngularVelocity rates = gyro.getAngularVelocity(AngleUnit.DEGREES);
+        return (float)Math.sqrt(Math.pow(rates.xRotationRate - 0.5,2) + Math.pow(rates.yRotationRate - 0.5,2));
     }
 }

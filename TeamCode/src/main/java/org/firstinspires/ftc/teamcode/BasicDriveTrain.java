@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
@@ -15,6 +19,8 @@ import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
+
+import java.util.concurrent.Callable;
 
 @TeleOp(name = "9911DT", group = "Basic")
 public class BasicDriveTrain extends OpMode implements TeleOpConstants, AutonomousConstants {
@@ -29,6 +35,9 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     private Servo clampRight;
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
+    private IntegratingGyroscope gyro;
+    private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+    private AngularVelocity rates;
 
     @Override
     public void init() {
@@ -41,6 +50,9 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.assist = hardwareMap.get(Servo.class, "assist");
         this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
+        this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
+        modernRoboticsI2cGyro.calibrate();
 
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -49,6 +61,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
 
     @Override
     public void loop() {
+        rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
         telemetry.addData("isGrabberOpen", this.grabberState);
         telemetry.update();
 
