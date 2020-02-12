@@ -178,7 +178,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(600);
+                    sleep(850);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -244,7 +244,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.mecanumDrive.stopMoving();
 
                     // move the foundation until the distance to wall is met
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 1);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 115));
                     this.mecanumDrive.stopMoving();
                     step++;

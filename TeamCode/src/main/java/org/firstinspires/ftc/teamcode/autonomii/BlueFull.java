@@ -159,7 +159,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
                     // implement double check
 
-                    if (!(((int) this.hsvValues[0]) < 85)) {
+                    if (!(((int) this.hsvValues[0]) < 50    )) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
