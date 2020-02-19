@@ -104,7 +104,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.intake.getMotor1().setPower(0);
                     this.intake.getMotor2().setPower(0);
                     if ((((int) this.hsvValues[0]) < 85)) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -1, 0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0.05);
                     } else {
                         // found a skystone (hopefully, anyway)
                         this.mecanumDrive.stopMoving();
@@ -148,7 +148,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(450);
+                    sleep(600);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -190,7 +190,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     else {
                         this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.55, 0);
-                        sleep(1800);
+                        sleep(1900);
                         this.mecanumDrive.stopMoving();
                         step++;
                     }
@@ -208,9 +208,14 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.arm.setPower(0);
                     break;
                 case 4:
+                    // translate before we pull back
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(750);
+                    this.mecanumDrive.stopMoving();
+
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 115));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
