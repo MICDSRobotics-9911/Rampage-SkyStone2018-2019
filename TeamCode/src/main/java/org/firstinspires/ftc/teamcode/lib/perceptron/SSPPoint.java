@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomii.perceptron;
+package org.firstinspires.ftc.teamcode.lib.perceptron;
 
 /**
  * Basic data point for the skystone perceptron (SSP)

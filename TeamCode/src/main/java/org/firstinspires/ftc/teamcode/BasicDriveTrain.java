@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
+import org.firstinspires.ftc.teamcode.lib.perceptron.CollisionExecutor;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
@@ -38,6 +40,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     private IntegratingGyroscope gyro;
     private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
     private AngularVelocity rates;
+    private IMUWrapper imuWrapper;
 
     @Override
     public void init() {
@@ -51,9 +54,9 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        this.imuWrapper = new IMUWrapper(hardwareMap);
         this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
         modernRoboticsI2cGyro.calibrate();
-
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -61,8 +64,9 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
 
     @Override
     public void loop() {
-        rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
+        //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
         telemetry.addData("isGrabberOpen", this.grabberState);
+        telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
         telemetry.update();
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
