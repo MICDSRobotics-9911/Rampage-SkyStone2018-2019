@@ -32,6 +32,10 @@ public class SSPPoint {
         this.colorSensorPoint = colorSensorPoint;
     }
 
+    public String toString() {
+        return this.colorSensorPoint + "," + this.IMUPoint;
+    }
+
     public void setIMUPoint(float IMUPoint) {
         this.IMUPoint = IMUPoint;
     }

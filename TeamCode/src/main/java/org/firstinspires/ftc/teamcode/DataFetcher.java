@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
@@ -22,6 +23,8 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +63,9 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        gyro = (IntegratingGyroscope)modernRoboticsI2cGyro;
+        modernRoboticsI2cGyro.calibrate();
     }
 
     public float accelerationMagnitiude(Acceleration a) {
@@ -74,6 +80,13 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
         //Log.i("[DF]", accelerationMagnitiude(this.imuWrapper.getIMU().getAcceleration()) + "," + this.imuWrapper.getHeading());
         //this.dataPoints.add(new SSPPoint(this.deltaAngleMagnititude(), this.imuWrapper.getHeading()));
         telemetry.addData("isGrabberOpen", this.grabberState);
+        telemetry.addData("Linear accel x", this.imuWrapper.getIMU().getLinearAcceleration().xAccel);
+        telemetry.addData("Linear accel y", this.imuWrapper.getIMU().getLinearAcceleration().yAccel);
+        telemetry.addData("flux x:", this.imuWrapper.getIMU().getMagneticFieldStrength().x);
+        telemetry.addData("flux y:", this.imuWrapper.getIMU().getMagneticFieldStrength().y);
+        telemetry.addData("flux z:", this.imuWrapper.getIMU().getMagneticFieldStrength().z);
+        this.dataPoints.add(new SSPPoint(this.linearAccelerationMagnitude(), modernRoboticsI2cGyro.getHeading()));
+        telemetry.addData("DP Heap:", this.dataPoints.size());
         telemetry.update();
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
@@ -97,6 +110,20 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
         else if (this.grabberState.equals(GrabberState.OPEN) && (gamepad2.dpad_right || gamepad1.dpad_right)) {
             // close the grabber from the full position
             this.grabberState = GrabberState.CLOSED;
+        }
+
+        if (gamepad1.a) {
+            try {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(hardwareMap.appContext.openFileOutput("datapoints.txt", Context.MODE_PRIVATE));
+                for (SSPPoint dp : this.dataPoints) {
+                    outputStreamWriter.write(dp.toString());
+                }
+                outputStreamWriter.close();
+                telemetry.addData("DW:" , "Done");
+            }
+            catch (IOException io) {
+                telemetry.addData("Error", io.getMessage());
+            }
         }
 
         // grabber servo enum controller switch
@@ -161,5 +188,10 @@ public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousCo
     public float deltaAngleMagnititude() {
         AngularVelocity rates = gyro.getAngularVelocity(AngleUnit.DEGREES);
         return (float)Math.sqrt(Math.pow(rates.xRotationRate - 0.5,2) + Math.pow(rates.yRotationRate - 0.5,2));
+    }
+
+    public float linearAccelerationMagnitude() {
+        Acceleration current = this.imuWrapper.getIMU().getLinearAcceleration();
+        return (float) Math.sqrt(Math.pow(current.xAccel,2) + Math.pow(current.yAccel,2));
     }
 }
