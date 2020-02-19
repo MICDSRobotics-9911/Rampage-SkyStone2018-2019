@@ -1,29 +1,36 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
-import android.util.Log;
+import android.content.Context;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.teamcode.lib.perceptron.SSPPoint;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
-import org.firstinspires.ftc.teamcode.lib.perceptron.CollisionExecutor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@TeleOp(name = "9911DT", group = "Basic")
-public class BasicDriveTrain extends OpMode implements TeleOpConstants, AutonomousConstants {
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+@TeleOp(name = "DataFetcher", group = "Basic")
+@Disabled
+public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -35,14 +42,16 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     private Servo clampRight;
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
+    private IMUWrapper imuWrapper;
     private IntegratingGyroscope gyro;
     private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
     private AngularVelocity rates;
-    private IMUWrapper imuWrapper;
+    private List<SSPPoint> dataPoints = new ArrayList<>();
 
     @Override
     public void init() {
         this.robot = new Robot(hardwareMap);
+        this.imuWrapper = new IMUWrapper(hardwareMap);
         this.mecanumDrive = (MecanumDrive) this.robot.getDrivetrain();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.arm = hardwareMap.get(DcMotor.class, "arm");
@@ -51,20 +60,34 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.assist = hardwareMap.get(Servo.class, "assist");
         this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
-        this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
-        this.imuWrapper = new IMUWrapper(hardwareMap);
-        this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
-        modernRoboticsI2cGyro.calibrate();
+
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        gyro = (IntegratingGyroscope)modernRoboticsI2cGyro;
+        modernRoboticsI2cGyro.calibrate();
+    }
+
+    public float accelerationMagnitiude(Acceleration a) {
+        return (float) Math.abs(Math.sqrt(Math.pow(a.xAccel,2) + Math.pow(a.yAccel,2) + Math.pow(a.zAccel,2)));
     }
 
     @Override
     public void loop() {
-        //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
+        //this.imuWrapper.updateAngles();
+        /*telemetry.addData("Acceleration", this.imuWrapper.getIMU().getAcceleration());
+        telemetry.addData("Heading", this.imuWrapper.getHeading());*/
+        //Log.i("[DF]", accelerationMagnitiude(this.imuWrapper.getIMU().getAcceleration()) + "," + this.imuWrapper.getHeading());
+        //this.dataPoints.add(new SSPPoint(this.deltaAngleMagnititude(), this.imuWrapper.getHeading()));
         telemetry.addData("isGrabberOpen", this.grabberState);
-        telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
+        telemetry.addData("Linear accel x", this.imuWrapper.getIMU().getLinearAcceleration().xAccel);
+        telemetry.addData("Linear accel y", this.imuWrapper.getIMU().getLinearAcceleration().yAccel);
+        telemetry.addData("flux x:", this.imuWrapper.getIMU().getMagneticFieldStrength().x);
+        telemetry.addData("flux y:", this.imuWrapper.getIMU().getMagneticFieldStrength().y);
+        telemetry.addData("flux z:", this.imuWrapper.getIMU().getMagneticFieldStrength().z);
+        this.dataPoints.add(new SSPPoint(this.linearAccelerationMagnitude(), modernRoboticsI2cGyro.getHeading()));
+        telemetry.addData("DP Heap:", this.dataPoints.size());
         telemetry.update();
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
@@ -88,6 +111,20 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         else if (this.grabberState.equals(GrabberState.OPEN) && (gamepad2.dpad_right || gamepad1.dpad_right)) {
             // close the grabber from the full position
             this.grabberState = GrabberState.CLOSED;
+        }
+
+        if (gamepad1.a) {
+            try {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(hardwareMap.appContext.openFileOutput("datapoints.txt", Context.MODE_PRIVATE));
+                for (SSPPoint dp : this.dataPoints) {
+                    outputStreamWriter.write(dp.toString());
+                }
+                outputStreamWriter.close();
+                telemetry.addData("DW:" , "Done");
+            }
+            catch (IOException io) {
+                telemetry.addData("Error", io.getMessage());
+            }
         }
 
         // grabber servo enum controller switch
@@ -147,5 +184,15 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
             this.arm.setPower(0);
             this.elevator.setPower(0);
         }
+    }
+
+    public float deltaAngleMagnititude() {
+        AngularVelocity rates = gyro.getAngularVelocity(AngleUnit.DEGREES);
+        return (float)Math.sqrt(Math.pow(rates.xRotationRate - 0.5,2) + Math.pow(rates.yRotationRate - 0.5,2));
+    }
+
+    public float linearAccelerationMagnitude() {
+        Acceleration current = this.imuWrapper.getIMU().getLinearAcceleration();
+        return (float) Math.sqrt(Math.pow(current.xAccel,2) + Math.pow(current.yAccel,2));
     }
 }
