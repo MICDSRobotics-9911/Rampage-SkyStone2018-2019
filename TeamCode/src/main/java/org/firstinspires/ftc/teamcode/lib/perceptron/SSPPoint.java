@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.perceptron;
 
 /**
  * Basic data point for the skystone perceptron (SSP)
+ * @deprecated
  * @since 2/1/20
  */
 public class SSPPoint {
