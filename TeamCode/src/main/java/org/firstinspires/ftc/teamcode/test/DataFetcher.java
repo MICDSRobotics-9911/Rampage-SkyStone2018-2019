@@ -28,6 +28,10 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * TeleOp that was used for fetching data for use in the Collision detector.
+ * @deprecated
+ */
 @TeleOp(name = "DataFetcher", group = "Basic")
 @Disabled
 public class DataFetcher extends OpMode implements TeleOpConstants, AutonomousConstants {

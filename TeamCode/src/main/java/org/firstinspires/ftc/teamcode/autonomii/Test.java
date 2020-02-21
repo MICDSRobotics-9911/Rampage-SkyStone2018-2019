@@ -12,7 +12,11 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 
 import java.util.Locale;
 
+/**
+ * @deprecated
+ */
 @Autonomous(name = "Test")
+@Disabled
 public class Test extends LinearOpMode {
     private Servo clampLeft;
     private DigitalChannel frontSwitch;
