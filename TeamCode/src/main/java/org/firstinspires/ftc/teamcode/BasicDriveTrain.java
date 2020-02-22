@@ -53,8 +53,8 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
         this.imuWrapper = new IMUWrapper(hardwareMap);
-        this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
-        modernRoboticsI2cGyro.calibrate();
+        /*this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
+        modernRoboticsI2cGyro.calibrate();*/
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,13 +64,13 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     public void loop() {
         //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
         telemetry.addData("isGrabberOpen", this.grabberState);
-        telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
+        //telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
         telemetry.update();
 
         // check for collision. If collided, stop to prevent further damage
-        if (CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper)) {
+        /*if (CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper)) {
             this.mecanumDrive.stopMoving();
-        }
+        }*/
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 

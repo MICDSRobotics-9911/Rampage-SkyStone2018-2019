@@ -195,7 +195,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(850);
+                    sleep(450);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -205,7 +205,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.imuWrapper.updateAngles();
                     sleep(1); // just so we don't burn a hole in the CPU :)
                     float angle = this.imuWrapper.getHeading();
-                    if (angle <= 77) { // !this.touchSensorRight.isPressed()
+                    if (angle <= 73) { // !this.touchSensorRight.isPressed()
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
                     }
                     else {
@@ -228,6 +228,15 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     }
                     break;
                 case 2:
+                    this.imuWrapper.updateAngles();
+                    angle = this.imuWrapper.getHeading();
+                    if (angle > 35) {
+                        // this means we've gone off course. To avoid getting a major, kill the program
+                        this.stop();
+                    }
+                    else {
+                        continue;
+                    }
                     this.imuWrapper.updateAngles();
                     sleep(1);
                     float angles = this.imuWrapper.getHeading();
