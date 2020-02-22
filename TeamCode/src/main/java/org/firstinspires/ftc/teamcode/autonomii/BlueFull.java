@@ -21,12 +21,17 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
 
+
+//Baz, if u can see this then you are good to work for the rest of the evening
+//these comments should appear on your version of the code
+
 @Autonomous(name = "BlueAlmostFull", group = "Blue")
 public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
-
+//this is a test
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private ColorSensor colorSensor;
+    private ColorSensor lucasDetector;
     private DcMotor arm;
     private DcMotor elevator;
     private Servo grabber;
@@ -41,6 +46,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
     private MotorPair intake;
 
     private float hsvValues[] = {0F, 0F, 0F};
+    private float lucasValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
     private int step = -5;
 
@@ -49,6 +55,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
         this.robot = new Robot(hardwareMap);
         this.mecanumDrive = (MecanumDrive) this.robot.getDrivetrain();
         this.colorSensor = hardwareMap.get(ColorSensor.class, "c1");
+        this.lucasDetector = hardwareMap.get(ColorSensor.class, "lucasDetector");
         this.arm = hardwareMap.get(DcMotor.class, "arm");
         this.elevator = hardwareMap.get(DcMotor.class, "elevator");
         this.grabber = hardwareMap.get(Servo.class, "grabber");
@@ -86,6 +93,21 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
             telemetry.addData("Blue", this.hsvValues[2]);
             telemetry.addData("Alpha", this.colorSensor.alpha());
             telemetry.update();
+
+            Color.RGBToHSV((int) (lucasDetector.red() * this.SCALE_FACTOR),
+                    (int) (lucasDetector.green() * this.SCALE_FACTOR),
+                    (int) (lucasDetector.blue() * this.SCALE_FACTOR),
+                    this.lucasValues
+            );
+
+
+            telemetry.addData("Step", this.step);
+            telemetry.addData("Red", this.lucasValues[0]);
+            telemetry.addData("Green", this.lucasValues[1]);
+            telemetry.addData("Blue", this.lucasValues[2]);
+            telemetry.addData("Alpha", this.lucasDetector.alpha());
+            telemetry.update();
+
 
             switch (step) {
                 // TODO: may have to implement code for purging our capstone (orange block)
@@ -152,6 +174,45 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(450);
                     this.mecanumDrive.stopMoving();
+
+                    // implement double check
+
+
+
+                    if ((((int) lucasDetector.alpha()) < 200   )) {
+
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        this.arm.setPower(0.3);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        this.sleep(300);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
+                        this.sleep(300);
+                        this.mecanumDrive.stopMoving();
+                        this.arm.setPower(-0.5);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        sleep(300);
+                        this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        sleep(150);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        sleep(200);
+                        this.mecanumDrive.stopMoving();
+                        this.assist.setPosition(1);
+                        sleep(1300);
+
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
+                        this.sleep(250);
+                        this.mecanumDrive.stopMoving();
+
+
+                    }
+
+
+
+
                     step++;
                     break;
                 case 1:
@@ -211,16 +272,22 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     break;
                 case 4:
                     // translate before we pull back
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); // TODO: idk if this is right or left
-                    sleep(750);
-                    this.mecanumDrive.stopMoving();
+
 
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 220));
                     this.mecanumDrive.stopMoving();
+
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0); // TODO: idk if this is right or left
+                    sleep(85);
+                    this.mecanumDrive.stopMoving();
+
                     step++;
                     break;
+
                 case 5:
                     // take clamps off the foundation
                     this.arm.setPower(1);
