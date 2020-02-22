@@ -177,7 +177,9 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
                     // implement double check
 
-                    if ((((int) this.lucasValues[0]) < 95   )) {
+
+
+                    if ((((int) lucasDetector.alpha()) < 200   )) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
@@ -270,16 +272,22 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     break;
                 case 4:
                     // translate before we pull back
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); // TODO: idk if this is right or left
-                    sleep(750);
-                    this.mecanumDrive.stopMoving();
+
 
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 120));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 220));
                     this.mecanumDrive.stopMoving();
+
+
+
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0); // TODO: idk if this is right or left
+                    sleep(85);
+                    this.mecanumDrive.stopMoving();
+
                     step++;
                     break;
+
                 case 5:
                     // take clamps off the foundation
                     this.arm.setPower(1);

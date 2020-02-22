@@ -168,7 +168,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // implement double check
 
-                    if ((((int) this.lucasValues[0]) < 95)) {
+                    if ((((int) lucasDetector.alpha()) < 200   )) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
