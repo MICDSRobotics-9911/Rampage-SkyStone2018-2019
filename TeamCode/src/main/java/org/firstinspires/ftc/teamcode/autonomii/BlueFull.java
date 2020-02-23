@@ -10,10 +10,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
+import org.firstinspires.ftc.teamcode.lib.CourseCorrector;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
+import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltageObj;
+import org.firstinspires.ftc.teamcode.robotplus.autonomous.TranslateData;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
@@ -44,6 +49,10 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
     private IMUWrapper imuWrapper;
     private double voltage;
     private MotorPair intake;
+    private ElapsedTime elapsedTime;
+    private I2CGyroWrapper i2CGyroWrapper;
+
+    private CourseCorrector courseCorrector;
 
     private float hsvValues[] = {0F, 0F, 0F};
     private float lucasValues[] = {0F, 0F, 0F};
@@ -68,6 +77,9 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
+        this.i2CGyroWrapper = new I2CGyroWrapper(hardwareMap);
+
+        this.elapsedTime = new ElapsedTime();
 
         // brakes!
         this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -176,11 +188,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.mecanumDrive.stopMoving();
 
                     // implement double check
-
-
-
                     if ((((int) lucasDetector.alpha()) < 200   )) {
-
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
                         sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
@@ -209,10 +217,6 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
 
                     }
-
-
-
-
                     step++;
                     break;
                 case 1:
@@ -222,12 +226,21 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     sleep(1); // just so we don't burn a hole in the CPU :)
                     float angle = this.imuWrapper.getHeading();
                     if (angle >= -82) { // !this.touchSensorRight.isPressed()
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4); // TODO: may need to change the sign
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4);
                     }
                     else {
                         // start moving towards the wall and hit the wall
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                        sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
+                        //sleep(TimeOffsetVoltage.calculateDistance(voltage, 200)); // TODO: add course correction
+
+                        if (this.courseCorrector == null) {
+                            // make only one course corrector
+                            this.courseCorrector = new CourseCorrector(200, voltage, this.elapsedTime);
+                        }
+                        else {
+                            this.courseCorrector.linearTranslate(new TranslateData(this.mecanumDrive, MecanumDrive.Direction.DOWN, 1, 0), this.i2CGyroWrapper);
+                        }
+
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
                         sleep(175);
                         this.mecanumDrive.stopMoving();
@@ -235,11 +248,6 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                         sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                         this.arm.setPower(0.15);
                         // rotate back, but we'll do that in the next step
-
-                        /*this.mecanumDrive.stopMoving();
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                        sleep(250);
-                        this.mecanumDrive.stopMoving();*/
                         step++;
                     }
                     break;

@@ -18,49 +18,12 @@ public class CollisionExecutor {
      * @return whether the robot has collided
      */
     public static boolean calculate(int heading, IMUWrapper wrapper) {
-        if (2 * ((roundAngle(heading) * 0.35390572195504255) + (linearAccelerationMagnitude(wrapper.getIMU().getLinearAcceleration()) * 0.020031598717753236)) > 1) {
+        if (2 * ((AxisQuadrants.roundAngle(heading) * 0.35390572195504255) + (linearAccelerationMagnitude(wrapper.getIMU().getLinearAcceleration()) * 0.020031598717753236)) > 1) {
             return false;
         }
         else {
             return true;
         }
-    }
-
-    /**
-     * Measures the heading of the robot against the closest 45 degrees
-     * @param angle
-     * @see AxisQuadrants
-     * @return
-     */
-    private static float roundAngle(float angle) {
-        float correctedAngle = angle;
-        AxisQuadrants quadrants = AxisQuadrants.Q1;
-        if (correctedAngle > 180) {
-            correctedAngle = 180 - angle;
-        }
-
-        if (correctedAngle > 45 && correctedAngle < 90) {
-            quadrants = AxisQuadrants.Q2;
-        }
-        else if (correctedAngle > 90 && correctedAngle < 135) {
-            quadrants = AxisQuadrants.Q3;
-        }
-        else if (correctedAngle > 135) {
-            quadrants = AxisQuadrants.Q4;
-        }
-        else {
-            quadrants = AxisQuadrants.Q1;
-        }
-
-        float deltaAngle = 0;
-        switch (quadrants) {
-            case Q1: deltaAngle = 45 - correctedAngle; break;
-            case Q2: deltaAngle = 90 - correctedAngle; break;
-            case Q3: deltaAngle = 135 - correctedAngle; break;
-            case Q4: deltaAngle = 180 - correctedAngle; break;
-        }
-
-        return deltaAngle;
     }
 
     /**
