@@ -229,15 +229,6 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     break;
                 case 2:
                     this.imuWrapper.updateAngles();
-                    angle = this.imuWrapper.getHeading();
-                    if (angle > 35) {
-                        // this means we've gone off course. To avoid getting a major, kill the program
-                        this.stop();
-                    }
-                    else {
-                        continue;
-                    }
-                    this.imuWrapper.updateAngles();
                     sleep(1);
                     float angles = this.imuWrapper.getHeading();
                     if (angles >= 0) { // '0' degrees

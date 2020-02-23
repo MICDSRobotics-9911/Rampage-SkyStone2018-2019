@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "BlueGoToLineFromTriangle", group = "Blue")
+@Autonomous(name = "go to line", group = "Red")
 public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
@@ -84,17 +84,17 @@ public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
                     // take clamp off and move to the blue line
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
+                    sleep(900);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
 
                 case 1:
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    /*this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);*/
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0.002);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(400);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
