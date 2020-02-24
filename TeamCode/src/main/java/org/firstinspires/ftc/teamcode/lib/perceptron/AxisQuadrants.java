@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.lib.perceptron;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Axis;
-
 /**
  * Enum for notating what relative angle quadrant the robot is in. See notebook for further details.
  */
@@ -18,7 +16,7 @@ public enum AxisQuadrants {
         float correctedAngle = angle;
         AxisQuadrants quadrants = AxisQuadrants.Q1;
         if (correctedAngle > 180) {
-            correctedAngle = 180 - angle;
+            correctedAngle = angle - 180;
         }
 
         if (correctedAngle > 45 && correctedAngle < 90) {
@@ -36,19 +34,19 @@ public enum AxisQuadrants {
 
         float deltaAngle = 0;
         switch (quadrants) {
-            case Q1: deltaAngle = 45 - correctedAngle; break;
-            case Q2: deltaAngle = 90 - correctedAngle; break;
-            case Q3: deltaAngle = 135 - correctedAngle; break;
-            case Q4: deltaAngle = 180 - correctedAngle; break;
+            case Q1: deltaAngle = correctedAngle; break;
+            case Q2: deltaAngle = 45 - correctedAngle; break;
+            case Q3: deltaAngle = 90 - correctedAngle; break;
+            case Q4: deltaAngle = 135 - correctedAngle; break;
         }
 
-        return deltaAngle;
+        return Math.abs(deltaAngle);
     }
 
     public AxisQuadrants currentQuadrant(float angle) {
         float correctedAngle = angle;
         if (correctedAngle > 180) {
-            correctedAngle = 180 - angle;
+            correctedAngle = angle - 180;
         }
 
         if (correctedAngle > 45 && correctedAngle < 90) {

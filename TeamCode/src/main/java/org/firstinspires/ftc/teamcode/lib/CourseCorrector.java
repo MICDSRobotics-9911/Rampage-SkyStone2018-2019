@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.robotplus.autonomous.TranslateData;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 
+/**
+ * @deprecated
+ */
 public class CourseCorrector {
     private TimeOffsetVoltageObj timeOffsetVoltageObj;
     private ElapsedTime startTime;

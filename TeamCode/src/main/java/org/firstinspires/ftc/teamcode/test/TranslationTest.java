@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.CourseCorrector;
+import org.firstinspires.ftc.teamcode.lib.perceptron.AxisQuadrants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TranslateData;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
@@ -26,9 +27,10 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 /**
  * Prototype program for detetcting the skystone
+ * @deprecated
  */
-@Autonomous(name = "DetectSkyStone", group = "Test")
-// @Disabled
+@Autonomous(name = "Translation Test", group = "Test")
+@Disabled
 public class TranslationTest extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
@@ -89,9 +91,15 @@ public class TranslationTest extends LinearOpMode implements AutonomousConstants
         waitForStart();
 
 
-        if (opModeIsActive()) {
-            this.courseCorrector = new CourseCorrector(50, voltage, this.elapsedTime);
-            this.courseCorrector.linearTranslate(new TranslateData(this.mecanumDrive, MecanumDrive.Direction.DOWN), this.i2CGyroWrapper);
+        while(opModeIsActive()) {
+            telemetry.addData("Relative Quadrant", AxisQuadrants.roundAngle(this.i2CGyroWrapper.getHeading()));
+            telemetry.addData("Heading", this.i2CGyroWrapper.getHeading());
+            telemetry.update();
+            sleep(1);
         }
+        /*if (opModeIsActive()) {
+            this.courseCorrector = new CourseCorrector(300, voltage, this.elapsedTime);
+            this.courseCorrector.linearTranslate(new TranslateData(this.mecanumDrive, MecanumDrive.Direction.DOWN), this.i2CGyroWrapper);
+        }*/
     }
 }
