@@ -163,9 +163,4 @@ public class BasicDriveTrainwithCollision extends OpMode implements TeleOpConsta
             this.elevator.setPower(0);
         }
     }
-
-    @Override
-    public void stop() {
-        this.collisionThread.stop();
-    }
 }
