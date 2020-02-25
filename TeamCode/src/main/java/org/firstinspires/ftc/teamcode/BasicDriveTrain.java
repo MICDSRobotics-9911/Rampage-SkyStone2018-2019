@@ -64,13 +64,13 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     public void loop() {
         //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
         telemetry.addData("isGrabberOpen", this.grabberState);
-        //telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
+        telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
         telemetry.update();
 
         // check for collision. If collided, stop to prevent further damage
-        /*if (CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper)) {
+        if (CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper)) {
             this.mecanumDrive.stopMoving();
-        }*/
+        }
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
 

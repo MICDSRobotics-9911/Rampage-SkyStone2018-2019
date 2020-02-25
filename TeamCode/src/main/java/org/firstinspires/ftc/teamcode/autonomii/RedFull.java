@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.ODSasTouchSensor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @Autonomous(name = "RedAlmostFull", group = "Red")
@@ -37,6 +38,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
     private IMUWrapper imuWrapper;
     private double voltage;
     private MotorPair intake;
+    private ODSasTouchSensor frontODS;
 
 
     private float hsvValues[] = {0F, 0F, 0F};
@@ -62,6 +64,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
+        this.frontODS = new ODSasTouchSensor(hardwareMap, "c2");
 
 
         // brakes!
@@ -194,8 +197,17 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     }
 
                     // move backwards
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    /*this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(450);
+                    this.mecanumDrive.stopMoving();*/
+                    while (!this.frontODS.isPressed()) {
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.5, 0);
+                        sleep(1);
+                    }
+                    this.mecanumDrive.stopMoving();
+                    sleep(100);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 44));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -219,11 +231,10 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                         sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                         this.arm.setPower(0.15);
                         // rotate back, but we'll do that in the next step
-
-                        /*this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
                         sleep(250);
-                        this.mecanumDrive.stopMoving();*/
+                        this.mecanumDrive.stopMoving();
                         step++;
                     }
                     break;
@@ -231,13 +242,13 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.imuWrapper.updateAngles();
                     sleep(1);
                     float angles = this.imuWrapper.getHeading();
-                    if (angles >= 0) { // '0' degrees
+                    if (angles >= 10) { // '0' degrees
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, -0.4);
                     }
                     else {
                         this.mecanumDrive.stopMoving();
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.55, 0);
-                        sleep(1900);
+                        sleep(1650);
                         this.mecanumDrive.stopMoving();
                         step++;
                     }

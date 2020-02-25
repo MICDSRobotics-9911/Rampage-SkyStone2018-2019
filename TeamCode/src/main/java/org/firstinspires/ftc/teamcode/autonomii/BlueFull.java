@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.ODSasTouchSensor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
@@ -51,8 +52,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
     private MotorPair intake;
     private ElapsedTime elapsedTime;
     private I2CGyroWrapper i2CGyroWrapper;
-
-    private CourseCorrector courseCorrector;
+    private ODSasTouchSensor frontODS;
 
     private float hsvValues[] = {0F, 0F, 0F};
     private float lucasValues[] = {0F, 0F, 0F};
@@ -222,6 +222,14 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                 case 1:
                     // start translating to the other side of the field
                     // the next step will be to start putting the foundation in the right spot
+                    while (!this.frontODS.isPressed()) {
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.5, 0);
+                    }
+                    this.mecanumDrive.stopMoving();
+                    sleep(100);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 47));
+
                     this.imuWrapper.updateAngles();
                     sleep(1); // just so we don't burn a hole in the CPU :)
                     float angle = this.imuWrapper.getHeading();
@@ -231,15 +239,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     else {
                         // start moving towards the wall and hit the wall
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                        //sleep(TimeOffsetVoltage.calculateDistance(voltage, 200)); // TODO: add course correction
-
-                        if (this.courseCorrector == null) {
-                            // make only one course corrector
-                            this.courseCorrector = new CourseCorrector(200, voltage, this.elapsedTime);
-                        }
-                        else {
-                            this.courseCorrector.linearTranslate(new TranslateData(this.mecanumDrive, MecanumDrive.Direction.DOWN, 1, 0), this.i2CGyroWrapper);
-                        }
+                        sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
 
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
                         sleep(175);
