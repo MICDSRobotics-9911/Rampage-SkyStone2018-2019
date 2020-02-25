@@ -18,11 +18,11 @@ public class CollisionExecutor {
      * @return whether the robot has collided
      */
     public static boolean calculate(int heading, IMUWrapper wrapper) {
-        if (2 * ((AxisQuadrants.roundAngle(heading) * 0.35390572195504255) + (linearAccelerationMagnitude(wrapper.getIMU().getLinearAcceleration()) * 0.020031598717753236)) > 1) {
-            return true;
+        if (2 * (((AxisQuadrants.roundAngle(heading) * 0.35390572195504255) + (linearAccelerationMagnitude(wrapper.getIMU().getLinearAcceleration()) * 0.020031598717753236))) > 1) {
+            return false;
         }
         else {
-            return false;
+            return true;
         }
     }
 
