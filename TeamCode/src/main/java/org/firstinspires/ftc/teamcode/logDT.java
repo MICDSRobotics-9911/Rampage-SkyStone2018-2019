@@ -73,7 +73,7 @@ public class logDT extends OpMode implements TeleOpConstants, AutonomousConstant
             this.mecanumDrive.stopMoving();
         }*/
 
-        this.mecanumDrive.complexDrive(-(Math.pow(10, (Math.abs(gamepad1.left_stick_x))-1.02288)) + 0.052, (Math.pow(10, (Math.abs(gamepad1.left_stick_y))-1.02288)) + 0.052, (Math.pow(10, (Math.abs(gamepad1.right_stick_x))-1.02288)) + 0.052, telemetry);
+        this.mecanumDrive.complexDrive(-(Math.pow(10, (Math.abs(gamepad1.left_stick_x))-1.07)) + 0.15, (Math.pow(10, (Math.abs(gamepad1.left_stick_y))-1.07)) + 0.15, (Math.pow(10, (Math.abs(gamepad1.right_stick_x))-1.07)) + 0.15, telemetry);
 
         // assist
         this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? TeleOpConstants.ASSIST_CLOSED : TeleOpConstants.ASSIST_OPEN);
