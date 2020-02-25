@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -12,13 +10,15 @@ import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
+import org.firstinspires.ftc.teamcode.lib.perceptron.CollisionExecutor;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@TeleOp(name = "9911DT", group = "Basic")
-public class BasicDriveTrain extends OpMode implements TeleOpConstants, AutonomousConstants {
+@TeleOp(name = "9911DT - Collision", group = "Basic")
+public class BasicDriveTrainwithCollision extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -30,10 +30,11 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
     private Servo clampRight;
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
-    private IntegratingGyroscope gyro;
-    private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
+    public I2CGyroWrapper i2CGyroWrapper;
     private AngularVelocity rates;
-    private IMUWrapper imuWrapper;
+    public IMUWrapper imuWrapper;
+    public boolean crashed = false;
+    private Thread collisionThread;
 
     @Override
     public void init() {
@@ -46,18 +47,39 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
         this.assist = hardwareMap.get(Servo.class, "assist");
         this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
-        this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        this.i2CGyroWrapper = new I2CGyroWrapper(hardwareMap);
+
         this.imuWrapper = new IMUWrapper(hardwareMap);
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // start the collision detector
+        collisionThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        // check for collision. If collided, stop to prevent further damage
+                        if (CollisionExecutor.calculate(i2CGyroWrapper.getHeading(), imuWrapper)) {
+                            crashed = true;
+                        }
+                        else {
+                            crashed = false;
+                        }
+                        Thread.sleep(5);
+                    }
+                    catch (InterruptedException e) {}
+                }
+            }
+        });
+        collisionThread.start();
     }
 
     @Override
     public void loop() {
-        //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
+        telemetry.addData("Crashed", crashed);
         telemetry.addData("isGrabberOpen", this.grabberState);
-        //telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
         telemetry.update();
 
         this.mecanumDrive.complexDrive(-gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, telemetry);
@@ -107,6 +129,8 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
 
         // elevator
         this.elevator.setPower(gamepad2.right_stick_y);
+        /*this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
+        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);*/
 
         // clamp
         if (this.clampState.equals(ClampState.UP) && (gamepad2.dpad_down || gamepad1.dpad_down)) {
@@ -138,5 +162,10 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
             this.arm.setPower(0);
             this.elevator.setPower(0);
         }
+    }
+
+    @Override
+    public void stop() {
+        this.collisionThread.stop();
     }
 }
