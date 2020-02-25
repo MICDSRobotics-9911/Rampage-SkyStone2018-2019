@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 import java.lang.Math;
 
-@TeleOp(name = "LogrithmicControl9911DT", group = "Basic")
-public class logDT extends OpMode implements TeleOpConstants, AutonomousConstants {
+@TeleOp(name = "BazDT", group = "Basic")
+public class exponentialDT extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
