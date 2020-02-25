@@ -61,6 +61,18 @@ public class logDT extends OpMode implements TeleOpConstants, AutonomousConstant
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    // function for  exponential movement, takes an input double x, outputs the motor power
+    private double computeMovement(double x) {
+        if (x == 0.0) {
+            return 0.0;
+        } else if (x > 0.0) {
+            return Math.pow(10, x - 1.07) + 0.15;
+        } else if (x < 0.0) {
+            return -(Math.pow(10, (-x) - 1.07) + 0.15);
+        }
+        return 0.0;
+    }
+
     @Override
     public void loop() {
         //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
@@ -73,7 +85,11 @@ public class logDT extends OpMode implements TeleOpConstants, AutonomousConstant
             this.mecanumDrive.stopMoving();
         }*/
 
-        this.mecanumDrive.complexDrive(-(Math.pow(10, (Math.abs(gamepad1.left_stick_x))-1.07)) + 0.15, (Math.pow(10, (Math.abs(gamepad1.left_stick_y))-1.07)) + 0.15, (Math.pow(10, (Math.abs(gamepad1.right_stick_x))-1.07)) + 0.15, telemetry);
+        this.mecanumDrive.complexDrive(
+                -(computeMovement(gamepad1.left_stick_x)),
+                computeMovement(gamepad1.left_stick_y),
+                computeMovement(gamepad1.right_stick_x),
+                telemetry);
 
         // assist
         this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? TeleOpConstants.ASSIST_CLOSED : TeleOpConstants.ASSIST_OPEN);
