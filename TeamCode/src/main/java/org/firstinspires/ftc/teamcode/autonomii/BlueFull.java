@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.CourseCorrector;
+import org.firstinspires.ftc.teamcode.lib.DoubleCheck;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltageObj;
@@ -122,14 +123,8 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
 
 
             switch (step) {
-                // TODO: may have to implement code for purging our capstone (orange block)
-
                 // first we have to approach the stones
                 case -5:
-
-                    /*this.intake.getMotor1().setPower(1);
-                    this.intake.getMotor2().setPower(-1);*/
-
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(voltage, 52)); // TODO: adjust first distance to the skystones
                     this.mecanumDrive.stopMoving();
@@ -188,35 +183,7 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.mecanumDrive.stopMoving();
 
                     // implement double check
-                    if ((((int) lucasDetector.alpha()) < 200   )) {
-                        this.assist.setPosition(0.1); // 'u' is the assist
-                        this.arm.setPower(0.3);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
-                        this.arm.setPower(0);
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        this.sleep(300);
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
-                        this.sleep(300);
-                        this.mecanumDrive.stopMoving();
-                        this.arm.setPower(-0.5);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
-                        this.arm.setPower(0);
-                        sleep(300);
-                        this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
-                        this.assist.setPosition(0.1); // 'u' is the assist
-                        sleep(150);
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        sleep(200);
-                        this.mecanumDrive.stopMoving();
-                        this.assist.setPosition(1);
-                        sleep(1300);
-
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),-1,0);
-                        this.sleep(250);
-                        this.mecanumDrive.stopMoving();
-
-
-                    }
+                    DoubleCheck.check(this, lucasDetector, arm, mecanumDrive, grabber, assist);
                     step++;
                     break;
                 case 1:
@@ -280,19 +247,13 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     break;
                 case 4:
                     // translate before we pull back
-
-
                     // move the foundation until the distance to wall is met
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 220));
                     this.mecanumDrive.stopMoving();
-
-
-
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0); // TODO: idk if this is right or left
                     sleep(85);
                     this.mecanumDrive.stopMoving();
-
                     step++;
                     break;
 
