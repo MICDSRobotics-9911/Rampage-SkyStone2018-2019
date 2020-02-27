@@ -74,9 +74,9 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
             if (x == 0.0) {
                 return 0.0;
             } else if (x > 0.0) {
-                return Math.pow(100, (0.958 * x) - 1.07) + 0.4;
+                return Math.pow(100, (0.87 * x) - 1.07) + 0.4;
             } else if (x < 0.0) {
-                return -(Math.pow(100, (-0.958 * x) - 1.07) + 0.4);
+                return -(Math.pow(100, (-0.87 * x) - 1.07) + 0.4);
             }
             return 0.0;
         }
