@@ -1,22 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
-import org.firstinspires.ftc.teamcode.lib.perceptron.CollisionExecutor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
@@ -61,18 +56,32 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    // function for  exponential movement, takes an input double x, outputs the motor power
+    /* function for  exponential movement, takes an input double x, outputs the motor power. when the foundation is clamped, it starts at a higher power
+    so that the motors turn on at the amount of power needed to move the foundation*/
+
     private double computeMovement(double x) {
-        if (x == 0.0) {
+        if (this.clampState == ClampState.UP) {
+            if (x == 0.0) {
+                return 0.0;
+            } else if (x > 0.0) {
+                return Math.pow(100, (1.02 * x) - 1.07) + 0.2;
+            } else if (x < 0.0) {
+                return -(Math.pow(100, (-1.02 * x) - 1.07) + 0.2);
+            }
             return 0.0;
-        } else if (x > 0.0) {
-            return Math.pow(10, x - 1.07) + 0.15;
-        } else if (x < 0.0) {
-            return -(Math.pow(10, (-x) - 1.07) + 0.15);
+        }
+        else if (this.clampState == ClampState.DOWN) {
+            if (x == 0.0) {
+                return 0.0;
+            } else if (x > 0.0) {
+                return Math.pow(100, (0.958 * x) - 1.07) + 0.4;
+            } else if (x < 0.0) {
+                return -(Math.pow(100, (-0.958 * x) - 1.07) + 0.4);
+            }
+            return 0.0;
         }
         return 0.0;
     }
-
     @Override
     public void loop() {
         //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
