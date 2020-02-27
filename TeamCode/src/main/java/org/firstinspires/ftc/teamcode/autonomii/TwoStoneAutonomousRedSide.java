@@ -107,6 +107,8 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
             telemetry.update();
 
             switch (step) {
+                //go to stones
+                // TODO: 2/27/2020 perfect drift
                 // TODO: may have to implement code for purging our capstone (orange block)
 
                 // first we have to approach the stones
@@ -122,10 +124,12 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case -4:
+                    //scanning
                     // start going down the line, scanning for skystones
 
                     if ((((int) this.hsvValues[0]) < 85)) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0.05);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0);
+                        // TODO: 2/27/2020 May need to change rotation speed
                     } else {
                         // found a skystone (hopefully, anyway)
                         this.mecanumDrive.stopMoving();
@@ -142,6 +146,8 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case -2:
+                    //grabbing stone
+
                     // drop the arm to grab a skystone
                     this.arm.setPower(-0.5);
                     sleep(AutonomousConstants.ARM_DROP_DISTANCE); // if you want to change this, make sure you change it in AutonomousConstants
@@ -164,6 +170,8 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
                     step++;
                     break;
                 case 0:
+                     //grabbing stone
+
                     // move arm back up a bit
                     this.arm.setPower(1);
                     sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
@@ -209,11 +217,18 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
                 case 1:
 
 
+                    //turn to face the foundations and got under the skybridge
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
-                        sleep(2100);
-                        this.mecanumDrive.stopMoving();
-                        // start moving towards the wall and hit the wall
+                    this.imuWrapper.updateAngles();
+                    sleep(1); // just so we don't burn a hole in the CPU :)
+                    float angle = this.imuWrapper.getHeading();
+
+                    // TODO: 2/27/2020 may need to mess with angle
+                    if (angle <= 253) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 0, 0.4); // TODO: may need to change the sign
+                    }
+                    this.mecanumDrive.stopMoving();
+                    // start moving towards the wall and hit the wall
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                         sleep(TimeOffsetVoltage.calculateDistance(voltage, 85));
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
@@ -225,27 +240,165 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
 
 
                 case 2:
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
-                    sleep(4500);
-                    this.mecanumDrive.stopMoving();
+
+                    //put arm up and unclamp
 
                     this.assist.setPosition(0.1); // 'u' is the assist
                     this.arm.setPower(0.6);
-                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/8); // if you want to change this, make sure you change it in AutonomousConstants
                     this.arm.setPower(0);
-
                     step++;
                     break;
 
                 case 3:
 
+                    //go back to the stones
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(TimeOffsetVoltage.calculateDistance(voltage, 85));
                     this.mecanumDrive.stopMoving();
-
                     step++;
                     break;
 
+                case 4:
+                    //turn to face the stones
+                    this.imuWrapper.updateAngles();
+                    sleep(1); // just so we don't burn a hole in the CPU :)
+                    angle = this.imuWrapper.getHeading();
+                    if (angle <= 98) { // !this.touchSensorRight.isPressed()
+                        // TODO: 2/27/2020 may need to mess with angle
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
+                    }
+
+                case 5:
+                    //scanning
+                    // start going down the line, scanning for skystones
+
+                    if ((((int) this.hsvValues[0]) < 85)) {
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0);
+                        // TODO: 2/27/2020 May need to change rotation speed
+                    } else {
+                        // found a skystone (hopefully, anyway)
+                        this.mecanumDrive.stopMoving();
+                        step++;
+                    }
+                    break;
+                case 6:
+                    /*
+                    // move backwards, so we clear the main skybridge
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
+                    sleep(150);
+                    this.mecanumDrive.stopMoving();
+                    */
+                    step++;
+                    break;
+                case 7:
+                    //grabbing stone
+
+                    // drop the arm to grab a skystone
+                    step++;
+                    break;
+                case 8:
+                    // open the claw and grab the skystone
+                    this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                    this.assist.setPosition(0.1); // 'u' is the assist
+                    sleep(150);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(200);
+                    this.mecanumDrive.stopMoving();
+                    this.assist.setPosition(1);
+                    sleep(1299);
+
+
+                    step++;
+                    break;
+                case 9:
+                    //grabbing stone
+
+                    // move arm back up a bit
+                    this.arm.setPower(1);
+                    //todo test this code
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
+                    this.arm.setPower(0.0099);
+                    //todo test this code
+
+                    // implement double check
+
+                    if ((((int) lucasDetector.alpha()) < 200   )) {
+
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        this.arm.setPower(0.3);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                        this.sleep(300);
+                        this.mecanumDrive.stopMoving();
+                        this.arm.setPower(-0.5);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
+                        this.arm.setPower(0);
+                        sleep(300);
+                        this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
+                        this.assist.setPosition(0.1); // 'u' is the assist
+                        sleep(150);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                        sleep(200);
+                        this.mecanumDrive.stopMoving();
+                        this.assist.setPosition(1);
+                        sleep(1300);
+
+
+                    }
+
+
+                    // start translating to the other side of the field
+                    // the next step will be to start putting the foundation in the right spot
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 3));
+                    this.mecanumDrive.stopMoving();
+
+
+                    step++;
+                    break;
+                case 10:
+
+
+                    //turn to face the foundations and got under the skybridge
+
+                    this.imuWrapper.updateAngles();
+                    sleep(1); // just so we don't burn a hole in the CPU :)
+                     angle = this.imuWrapper.getHeading();
+
+                    // TODO: 2/27/2020 may need to mess with angle
+                    if (angle <= 254) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 0, 0.4); // TODO: may need to change the sign
+                    }
+                    this.mecanumDrive.stopMoving();
+                    // start moving towards the wall and hit the wall
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 85));
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(210);
+
+                    this.mecanumDrive.stopMoving();
+                    step++;
+                    break;
+
+
+                case 11:
+
+                    //put arm up and unclamp
+
+                    this.assist.setPosition(0.1); // 'u' is the assist
+                    this.arm.setPower(0.599);
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/8); // if you want to change this, make sure you change it in AutonomousConstants
+                    this.arm.setPower(0);
+                    step++;
+                    break;
+
+
+                case 12:
+// go back to park
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 85));
 
 
 
