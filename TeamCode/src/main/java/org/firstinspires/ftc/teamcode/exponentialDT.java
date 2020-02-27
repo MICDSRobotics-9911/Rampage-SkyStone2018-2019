@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
-import java.lang.Math;
 
 @TeleOp(name = "BazDT", group = "Basic")
 public class exponentialDT extends OpMode implements TeleOpConstants, AutonomousConstants {
@@ -54,6 +53,14 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /* function for  exponential movement, takes an input double x, outputs the motor power. when the foundation is clamped, it starts at a higher power
@@ -102,6 +109,14 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
 
         // assist
         this.assist.setPosition((gamepad1.right_bumper || gamepad2.right_bumper) ? TeleOpConstants.ASSIST_CLOSED : TeleOpConstants.ASSIST_OPEN);
+
+        //auto foundation move
+
+        if  (gamepad2.b) {
+            this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 0.5, 0 );
+            sleep( 1000);
+            this.mecanumDrive.stopMoving();
+        }
 
         // grabber
         if (this.grabberState.equals(GrabberState.CLOSED) && (gamepad2.right_bumper || gamepad1.right_bumper)) {
