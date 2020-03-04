@@ -37,6 +37,9 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
     private IMUWrapper imuWrapper;
     private Controller newGamepad2;
 
+    boolean  bpresser = false;
+
+
     @Override
     public void init() {
         this.robot = new Robot(hardwareMap);
@@ -107,11 +110,10 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
 
         //auto foundation move
 
-        if  (newGamepad2.b.isDown()) {
-            this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 0.5, 0 );
-            sleep( 1000);
-            this.mecanumDrive.stopMoving();
+        if(newGamepad2.b.isDown()){
+            this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
         }
+
 
         // grabber
         if (this.grabberState.equals(GrabberState.CLOSED) && (gamepad2.right_bumper || gamepad1.right_bumper)) {
