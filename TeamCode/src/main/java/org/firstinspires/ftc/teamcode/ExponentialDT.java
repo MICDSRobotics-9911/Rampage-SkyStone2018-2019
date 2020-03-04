@@ -12,13 +12,14 @@ import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
+import org.firstinspires.ftc.teamcode.robotplus.gamepadwrapper.Controller;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 @TeleOp(name = "BazDT", group = "Basic")
-public class exponentialDT extends OpMode implements TeleOpConstants, AutonomousConstants {
+public class ExponentialDT extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -34,6 +35,7 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
     private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
     private AngularVelocity rates;
     private IMUWrapper imuWrapper;
+    private Controller newGamepad2;
 
     @Override
     public void init() {
@@ -48,19 +50,12 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
         this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
         this.imuWrapper = new IMUWrapper(hardwareMap);
+        this.newGamepad2 = new Controller(gamepad2);
         /*this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
         modernRoboticsI2cGyro.calibrate();*/
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-    public final void sleep(long milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     /* function for  exponential movement, takes an input double x, outputs the motor power. when the foundation is clamped, it starts at a higher power
@@ -112,7 +107,7 @@ public class exponentialDT extends OpMode implements TeleOpConstants, Autonomous
 
         //auto foundation move
 
-        if  (gamepad2.b) {
+        if  (newGamepad2.b.isDown()) {
             this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 0.5, 0 );
             sleep( 1000);
             this.mecanumDrive.stopMoving();
