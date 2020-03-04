@@ -111,7 +111,7 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
         //auto foundation move
 
         if(newGamepad2.b.isDown()){
-            this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
+            this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 0.5, 0);
         }
 
 
