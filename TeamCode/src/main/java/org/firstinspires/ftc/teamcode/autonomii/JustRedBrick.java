@@ -13,14 +13,15 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.ODSasTouchSensor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "RedAlmostFull", group = "Red")
-public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
+@Autonomous(name = "JustRedBrick", group = "Red")
+public class JustRedBrick extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -39,6 +40,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
     private double voltage;
     private MotorPair intake;
     private ODSasTouchSensor frontODS;
+    private I2CGyroWrapper i2CGyroWrapper;
 
 
     private float hsvValues[] = {0F, 0F, 0F};
@@ -65,6 +67,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
         this.frontODS = new ODSasTouchSensor(hardwareMap, "c2");
+        this.i2CGyroWrapper = new I2CGyroWrapper(hardwareMap);
 
 
         // brakes!
@@ -171,7 +174,7 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
 
                     // implement double check
 
-                    if ((((int) lucasDetector.alpha()) < 200   )) {
+                    if ((((int) lucasDetector.alpha()) < 200)) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
@@ -192,14 +195,12 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                         this.mecanumDrive.stopMoving();
                         this.assist.setPosition(1);
                         sleep(1300);
-
-
                     }
 
                     // move backwards
                     /*this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                     sleep(450);
-                    this.mecanumDrive.stopMoving();
+                    this.mecanumDrive.stopMoving(); */
                     while (!this.frontODS.isPressed()) {
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.5, 0);
                         sleep(1);
@@ -207,99 +208,37 @@ public class RedFull extends LinearOpMode implements AutonomousConstants, TeleOp
                     this.mecanumDrive.stopMoving();
                     sleep(100);
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 44));
-                    this.mecanumDrive.stopMoving();*/
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 49));
+                    this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 1:
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4); // TODO: may need to change the sign
+                    sleep(500);
                     // start translating to the other side of the field
                     // the next step will be to start putting the foundation in the right spot
-                    this.imuWrapper.updateAngles();
-                    sleep(1); // just so we don't burn a hole in the CPU :)
-                    float angle = this.imuWrapper.getHeading();
-                    if (angle <= 73) { // !this.touchSensorRight.isPressed()
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
+                    if (i2CGyroWrapper.getHeading() >= 300 ) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4); // TODO: may need to change the sign
                     }
                     else {
-                        // start moving towards the wall and hit the wall
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                        sleep(TimeOffsetVoltage.calculateDistance(voltage, 200));
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        sleep(210);
-                        this.mecanumDrive.stopMoving();
-                        this.arm.setPower(1);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
-                        this.arm.setPower(0.15);
-                        // rotate back, but we'll do that in the next step
-                        this.mecanumDrive.stopMoving();
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                        sleep(250);
-                        this.mecanumDrive.stopMoving();
                         step++;
                     }
                     break;
                 case 2:
-                    this.imuWrapper.updateAngles();
-                    sleep(1);
-                    float angles = this.imuWrapper.getHeading();
-                    if (angles >= 10) { // '0' degrees
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, -0.4);
-                    }
-                    else {
-                        this.mecanumDrive.stopMoving();
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.55, 0);
-                        sleep(1650);
-                        this.mecanumDrive.stopMoving();
-                        step++;
-                    }
-                    break;
-                case 3:
-                    // clamp the foundation
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
-                    sleep(1700);
-                    // then drop the block
-                    this.arm.setPower(-0.1);
-                    sleep(500);
-                    this.assist.setPosition(TeleOpConstants.ASSIST_CLOSED);
-                    step++;
-                    this.arm.setPower(0);
-                    break;
-                case 4:
-                    // translate before we pull back
-                    /*this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(750);
-                    this.mecanumDrive.stopMoving();*/
-
-                    // move the foundation until the distance to wall is met
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 115));
-                    this.mecanumDrive.stopMoving();
-                    step++;
-                    break;
-                case 5:
-                    // take clamps off the foundation
-                    this.arm.setPower(1);
-                    sleep(500);
-                    this.arm.setPower(0);
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
-                    step++;
-
-                    /*
-                    // bump off the wall
+                    // start moving towards the wall over the line
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(115);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 60));
+                    // open the clamp
+                    this.assist.setPosition(TeleOpConstants.ASSIST_CLOSED);
+                    sleep(210);
                     this.mecanumDrive.stopMoving();
-                    // take clamp off and move to the blue line
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
-                    sleep(1300);
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
+                    this.arm.setPower(1);
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
+                    this.arm.setPower(0.15);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 45));
                     this.mecanumDrive.stopMoving();
                     step++;
-                     */
                     break;
             }
         }
