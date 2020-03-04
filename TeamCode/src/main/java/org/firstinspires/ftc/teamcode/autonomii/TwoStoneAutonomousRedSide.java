@@ -107,7 +107,7 @@ public class TwoStoneAutonomousRedSide extends LinearOpMode implements Autonomou
             telemetry.update();
 
             switch (step) {
-                //go to stones
+                // go to stones
                 // TODO: 2/27/2020 perfect drift
                 // TODO: may have to implement code for purging our capstone (orange block)
 
