@@ -82,7 +82,7 @@ public class RedFromSquareToLine extends LinearOpMode implements AutonomousConst
 
                 case 1:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(),1,0);
-                    sleep(750);
+                    sleep(10);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
@@ -90,7 +90,7 @@ public class RedFromSquareToLine extends LinearOpMode implements AutonomousConst
 
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(),1,0);
-                    sleep(3500);
+                    sleep(150);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
