@@ -21,10 +21,6 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
 
-
-//Baz, if u can see this then you are good to work for the rest of the evening
-//these comments should appear on your version of the code
-
 @Autonomous(name = "BlueAlmostFull", group = "Blue")
 public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 //this is a test
@@ -176,10 +172,6 @@ public class BlueFull extends LinearOpMode implements AutonomousConstants, TeleO
                     this.mecanumDrive.stopMoving();
 
                     // implement double check
-
-
-                        //DoubleCheck.implementDoubleCheck(lucasDetector.alpha());
-
                     if ( lucasDetector.alpha() < 200) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
