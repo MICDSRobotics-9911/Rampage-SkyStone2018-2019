@@ -82,6 +82,7 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
         }
         return 0.0;
     }
+
     @Override
     public void loop() {
         //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
