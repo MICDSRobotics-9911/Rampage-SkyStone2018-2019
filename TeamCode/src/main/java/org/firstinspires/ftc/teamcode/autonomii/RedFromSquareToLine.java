@@ -93,7 +93,9 @@ public class RedFromSquareToLine extends LinearOpMode implements AutonomousConst
                     sleep(150);
                     this.mecanumDrive.stopMoving();
                     step++;
-                    break;
+
+
+                    //This should park
 
             }
         }
