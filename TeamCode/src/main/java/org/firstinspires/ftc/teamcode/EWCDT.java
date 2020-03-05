@@ -12,14 +12,18 @@ import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.ClampState;
 import org.firstinspires.ftc.teamcode.lib.GrabberState;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
+import org.firstinspires.ftc.teamcode.lib.perceptron.CollisionExecutor;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.I2CGyroWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
-import java.lang.Math;
 
-@TeleOp(name = "ExponentialDT", group = "Basic")
-public class ExponentialDT extends OpMode implements TeleOpConstants, AutonomousConstants {
+/**
+ * Exponential drivetrain with collision detection
+ */
+@TeleOp(name = "EWCDT", group = "Basic")
+public class EWCDT extends OpMode implements TeleOpConstants, AutonomousConstants {
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private MotorPair intake;
@@ -29,12 +33,13 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
     private Servo assist;
     private Servo clampLeft;
     private Servo clampRight;
+    private I2CGyroWrapper i2CGyroWrapper;
+    private IMUWrapper imuWrapper;
+
+    // data tracking
     private GrabberState grabberState = GrabberState.CLOSED;
     private ClampState clampState = ClampState.UP;
-    private IntegratingGyroscope gyro;
-    private ModernRoboticsI2cGyro modernRoboticsI2cGyro;
-    private AngularVelocity rates;
-    private IMUWrapper imuWrapper;
+    private boolean collisionDetected = false;
 
     @Override
     public void init() {
@@ -47,18 +52,29 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
         this.assist = hardwareMap.get(Servo.class, "assist");
         this.clampLeft = hardwareMap.get(Servo.class, "clamp_left");
         this.clampRight = hardwareMap.get(Servo.class, "clamp_right");
-        this.modernRoboticsI2cGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
-        this.imuWrapper = new IMUWrapper(hardwareMap);
-        /*this.gyro = (IntegratingGyroscope) modernRoboticsI2cGyro;
-        modernRoboticsI2cGyro.calibrate();*/
+        i2CGyroWrapper = new I2CGyroWrapper(hardwareMap);
+        imuWrapper = new IMUWrapper(hardwareMap);
 
         this.elevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (CollisionExecutor.calculate(i2CGyroWrapper.getHeading(), imuWrapper)) {
+                    collisionDetected = true;
+                }
+                else {
+                    collisionDetected = false;
+                }
+            }
+        });
     }
 
-    /* function for  exponential movement, takes an input double x, outputs the motor power. when the foundation is clamped, it starts at a higher power
-    so that the motors turn on at the amount of power needed to move the foundation*/
-
+    /**
+     * function for  exponential movement, takes an input double x, outputs the motor power. when the foundation is clamped, it starts at a higher power
+     * so that the motors turn on at the amount of power needed to move the foundation
+     */
     private double computeMovement(double x) {
         if (this.clampState == ClampState.UP) {
             if (x == 0.0) {
@@ -82,17 +98,17 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
         }
         return 0.0;
     }
+
     @Override
     public void loop() {
-        //rates = gyro.getAngularVelocity(AngleUnit.DEGREES.DEGREES);
         telemetry.addData("isGrabberOpen", this.grabberState);
-        //telemetry.addData("Collision Detected", CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper));
-        telemetry.update();
+        telemetry.addData("Collision", collisionDetected);
 
-        // check for collision. If collided, stop to prevent further damage
-        /*if (CollisionExecutor.calculate(modernRoboticsI2cGyro.getHeading(), this.imuWrapper)) {
+        if (collisionDetected) {
             this.mecanumDrive.stopMoving();
-        }*/
+        }
+        
+        telemetry.update();
 
         this.mecanumDrive.complexDrive(
                 -(computeMovement(gamepad1.left_stick_x)),
@@ -144,12 +160,9 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
         this.intake.getMotor2().setPower((this.intake.getMotor2().getPower() == 0) && (gamepad1.y || gamepad2.y) ? 1 : 0);
 
         // elevator
-        if (gamepad2.right_stick_y >= 0) {
-            this.elevator.setPower(gamepad2.right_stick_y);
-        }
-        else if (gamepad2.right_stick_y < 0) {
-            this.elevator.setPower(gamepad2.right_stick_y * 0.5);
-        }
+        this.elevator.setPower(gamepad2.right_stick_y);
+        /*this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
+        this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);*/
 
         // clamp
         if (this.clampState.equals(ClampState.UP) && (gamepad2.dpad_down || gamepad1.dpad_down)) {
