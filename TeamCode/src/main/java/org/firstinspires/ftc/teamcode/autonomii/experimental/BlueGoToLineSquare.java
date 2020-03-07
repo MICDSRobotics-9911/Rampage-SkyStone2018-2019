@@ -12,17 +12,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
+import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 /**
  * @deprecated
- * @see BlueGoToLineSquare
  */
-@Autonomous(name = "go to line", group = "Red")
+@Autonomous(name = "RedGoToLine", group = "Generic")
 @Disabled
-public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
+public class BlueGoToLineSquare extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -80,26 +80,20 @@ public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
             telemetry.update();
 
             switch (step) {
-
-
-
-
-
                 case 0:
                     // take clamp off and move to the blue line
 
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(900);
+                    sleep(100);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
-
                 case 1:
-                    /*this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);*/
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(400);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0.002);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

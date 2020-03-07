@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.autonomii;
+package org.firstinspires.ftc.teamcode.autonomii.farside;
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,18 +10,13 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.teamcode.lib.Alignment;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
-import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
-import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-/**
- * @deprecated
- */
-@Autonomous(name = "RedGoToLine", group = "Generic")
-@Disabled
-public class BlueGoToLineSquare extends LinearOpMode implements AutonomousConstants {
+@Autonomous(name = "FSBlueFromTriangleToLine", group = "Generic")
+public class FSBlueFromTriangleToLine extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -37,11 +31,11 @@ public class BlueGoToLineSquare extends LinearOpMode implements AutonomousConsta
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
     private double voltage;
-    private MotorPair intake;
+
 
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
-    private int step = 0;
+    private int step = 1;
 
     public void runOpMode() {
         // init
@@ -58,7 +52,12 @@ public class BlueGoToLineSquare extends LinearOpMode implements AutonomousConsta
         this.touchSensorRight = hardwareMap.get(TouchSensor.class, "right_touch");
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
-        this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
+
+        // set motors to coast
+        this.mecanumDrive.getMajorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMajorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.mecanumDrive.getMinorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         waitForStart();
 
@@ -81,28 +80,19 @@ public class BlueGoToLineSquare extends LinearOpMode implements AutonomousConsta
 
             switch (step) {
 
-
-
-
-
-                case 0:
-                    // take clamp off and move to the blue line
-
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
-                    this.mecanumDrive.stopMoving();
-                    step++;
-                    break;
-
                 case 1:
-                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
-                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    Alignment.alignToWallNoODS(this, mecanumDrive, voltage);
+                    step++;
+                    break;
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0.002);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
+
+                case 2:
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(150);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
+
             }
         }
     }

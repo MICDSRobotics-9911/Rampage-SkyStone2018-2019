@@ -21,4 +21,12 @@ public class Alignment {
         lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 44));
         mecanumDrive.stopMoving();
     }
+
+    public static void alignToWallNoODS(LinearOpMode lop, MecanumDrive mecanumDrive, double voltage) {
+        mecanumDrive.stopMoving();
+        lop.sleep(100);
+        mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+        lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 44));
+        mecanumDrive.stopMoving();
+    }
 }
