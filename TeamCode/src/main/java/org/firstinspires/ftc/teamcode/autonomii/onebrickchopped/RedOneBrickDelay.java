@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.ODSasTouchSensor;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-@Autonomous(name = "BlueOneBrickDelay", group = "Blue")
-public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
-//this is a test
+@Autonomous(name = "RedAlmostFull", group = "Red")
+public class RedOneBrickDelay extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
+
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private ColorSensor colorSensor;
@@ -39,7 +39,8 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
     private IMUWrapper imuWrapper;
     private double voltage;
     private MotorPair intake;
-    private ODSasTouchSensor odSasTouchSensor;
+    private ODSasTouchSensor frontODS;
+
 
     private float hsvValues[] = {0F, 0F, 0F};
     private float lucasValues[] = {0F, 0F, 0F};
@@ -64,7 +65,8 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
         this.imuWrapper = new IMUWrapper(hardwareMap);
-        this.odSasTouchSensor = new ODSasTouchSensor(hardwareMap, "c2");
+        this.frontODS = new ODSasTouchSensor(hardwareMap, "c2");
+
 
         // brakes!
         this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -105,13 +107,11 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
             telemetry.addData("Alpha", this.lucasDetector.alpha());
             telemetry.update();
 
-
             switch (step) {
                 // TODO: may have to implement code for purging our capstone (orange block)
 
                 // first we have to approach the stones
                 case -5:
-                    sleep(5000);
 
                     /*this.intake.getMotor1().setPower(1);
                     this.intake.getMotor2().setPower(-1);*/
@@ -124,10 +124,9 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
                     break;
                 case -4:
                     // start going down the line, scanning for skystones
-                    this.intake.getMotor1().setPower(0);
-                    this.intake.getMotor2().setPower(0);
+
                     if ((((int) this.hsvValues[0]) < 85)) {
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), -0.9, 0.05);
                     } else {
                         // found a skystone (hopefully, anyway)
                         this.mecanumDrive.stopMoving();
@@ -135,11 +134,12 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
                     }
                     break;
                 case -3:
+                    /*
                     // move backwards, so we clear the main skybridge
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0);
-                    // TODO: 11/18/2019 implement voltage sensor
-                    sleep(200); // TODO: make sure this value puts the robot away from the skybridge
+                    sleep(150);
                     this.mecanumDrive.stopMoving();
+                    */
                     step++;
                     break;
                 case -2:
@@ -160,32 +160,29 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
                     this.mecanumDrive.stopMoving();
                     this.assist.setPosition(1);
                     sleep(1300);
+
+
                     step++;
                     break;
                 case 0:
                     // move arm back up a bit
                     this.arm.setPower(1);
-                    sleep(AutonomousConstants.ARM_DROP_DISTANCE / 7);
+                    sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                     this.arm.setPower(0.01);
 
-                    // move backwards
-                    /*this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(450);
-                    this.mecanumDrive.stopMoving();*/
-                    Alignment.alignToWall(this, this.odSasTouchSensor, mecanumDrive, voltage);
-
                     // implement double check
-                    if (lucasDetector.alpha() < 200) {
+
+                    if ((((int) lucasDetector.alpha()) < 200   )) {
 
                         this.assist.setPosition(0.1); // 'u' is the assist
                         this.arm.setPower(0.3);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE / 16); // if you want to change this, make sure you change it in AutonomousConstants
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/16); // if you want to change this, make sure you change it in AutonomousConstants
                         this.arm.setPower(0);
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                         this.sleep(300);
                         this.mecanumDrive.stopMoving();
                         this.arm.setPower(-0.5);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE / 6); // if you want to change this, make sure you change it in AutonomousConstants
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/6); // if you want to change this, make sure you change it in AutonomousConstants
                         this.arm.setPower(0);
                         sleep(300);
                         this.grabber.setPosition(TeleOpConstants.GRABBER_CLOSED);
@@ -196,12 +193,12 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
                         this.mecanumDrive.stopMoving();
                         this.assist.setPosition(1);
                         sleep(1300);
+
+
                     }
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    this.sleep(250);
-                    this.mecanumDrive.stopMoving();
-
+                    // move backwards
+                    Alignment.alignToWall(this, this.frontODS, this.mecanumDrive, voltage);
 
                     step++;
                     break;
@@ -211,26 +208,85 @@ public class BlueOneBrickDelay extends LinearOpMode implements AutonomousConstan
                     this.imuWrapper.updateAngles();
                     sleep(1); // just so we don't burn a hole in the CPU :)
                     float angle = this.imuWrapper.getHeading();
-                    if (angle >= -82) { // !this.touchSensorRight.isPressed()
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, -0.4); // TODO: may need to change the sign
-                    } else {
+                    if (angle <= 73) { // !this.touchSensorRight.isPressed()
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 0, 0.4); // TODO: may need to change the sign
+                    }
+                    else {
                         // start moving towards the wall and hit the wall
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
                         sleep(TimeOffsetVoltage.calculateDistance(voltage, 50));
                         this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                        sleep(175);
+                        sleep(210);
                         this.mecanumDrive.stopMoving();
                         this.arm.setPower(1);
-                        sleep(AutonomousConstants.ARM_DROP_DISTANCE / 7);
+                        sleep(AutonomousConstants.ARM_DROP_DISTANCE/7);
                         this.arm.setPower(0.15);
                         // rotate back, but we'll do that in the next step
-
-                        /*this.mecanumDrive.stopMoving();
-                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
-                        sleep(250);
-                        this.mecanumDrive.stopMoving();*/
                         step++;
                     }
+                    break;
+                case 2:
+                    this.imuWrapper.updateAngles();
+                    sleep(1);
+                    float angles = this.imuWrapper.getHeading();
+                    if (angles >= 0) { // '0' degrees
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0, -0.4);
+                    }
+                    else {
+                        this.mecanumDrive.stopMoving();
+                        this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.55, 0);
+                        sleep(1900);
+                        this.mecanumDrive.stopMoving();
+                        step++;
+                    }
+                    break;
+                case 3:
+                    // clamp the foundation
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_DOWN);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_DOWN);
+                    sleep(1700);
+                    // then drop the block
+                    this.arm.setPower(-0.1);
+                    sleep(500);
+                    this.assist.setPosition(TeleOpConstants.ASSIST_CLOSED);
+                    step++;
+                    this.arm.setPower(0);
+                    break;
+                case 4:
+                    // translate before we pull back
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(750);
+                    this.mecanumDrive.stopMoving();
+
+                    // move the foundation until the distance to wall is met
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 1);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 115));
+                    this.mecanumDrive.stopMoving();
+                    step++;
+                    break;
+                case 5:
+                    // take clamps off the foundation
+                    this.arm.setPower(1);
+                    sleep(500);
+                    this.arm.setPower(0);
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    step++;
+
+                    /*
+                    // bump off the wall
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
+                    sleep(115);
+                    this.mecanumDrive.stopMoving();
+                    // take clamp off and move to the blue line
+                    this.clampLeft.setPosition(AutonomousConstants.CLAMP_LEFT_UP);
+                    this.clampRight.setPosition(AutonomousConstants.CLAMP_RIGHT_UP);
+                    sleep(1300);
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 225));
+                    this.mecanumDrive.stopMoving();
+                    step++;
+                     */
                     break;
             }
         }
