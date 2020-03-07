@@ -35,7 +35,7 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
 
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
-    private int step = 1;
+    private int step = 0;
 
     public void runOpMode() {
         // init
@@ -82,7 +82,7 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(750);
+                    sleep(650);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
