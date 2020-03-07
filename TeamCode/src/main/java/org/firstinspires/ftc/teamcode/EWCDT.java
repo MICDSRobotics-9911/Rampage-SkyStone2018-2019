@@ -161,10 +161,10 @@ public class EWCDT extends OpMode implements TeleOpConstants, AutonomousConstant
 
         // elevator
         if (gamepad2.right_stick_y >= 0) {
-            this.elevator.setPower(-gamepad2.right_stick_y);
+            this.elevator.setPower(-gamepad2.right_stick_y* 0.5);
         }
         else if (gamepad2.right_stick_y < 0) {
-            this.elevator.setPower(-gamepad2.right_stick_y * 0.5);
+            this.elevator.setPower(-gamepad2.right_stick_y );
         }
         /*this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.dpad_right) ? 1 : 0);
         this.elevator.setPower((this.elevator.getPower() == 0 && gamepad1.left_bumper) ? -1 : 0);*/

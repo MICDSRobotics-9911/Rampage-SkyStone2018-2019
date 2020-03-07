@@ -86,7 +86,7 @@ public class FSRedFromTriangleToLine extends LinearOpMode implements AutonomousC
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
-                    sleep(150);
+                    sleep(500);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

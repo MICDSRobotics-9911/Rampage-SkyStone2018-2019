@@ -85,7 +85,7 @@ public class FSRedFromSquareToLine extends LinearOpMode implements AutonomousCon
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(150);
+                    sleep(500);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;

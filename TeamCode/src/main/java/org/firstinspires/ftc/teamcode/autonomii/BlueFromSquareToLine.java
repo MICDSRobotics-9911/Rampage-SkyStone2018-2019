@@ -90,7 +90,7 @@ public class BlueFromSquareToLine extends LinearOpMode implements AutonomousCons
 
                 case 2:
                 this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(),1,0);
-                sleep(150);
+                sleep(500);
                 this.mecanumDrive.stopMoving();
                 step++;
                 break;
