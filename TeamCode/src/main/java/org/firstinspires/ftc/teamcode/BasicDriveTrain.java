@@ -119,7 +119,7 @@ public class BasicDriveTrain extends OpMode implements TeleOpConstants, Autonomo
 
         // elevator
         if (gamepad2.right_stick_y >= 0) {
-            this.elevator.setPower(-gamepad2.right_stick_y* 0.5);
+            this.elevator.setPower(-gamepad2.right_stick_y* 0.65);
         }
         else if (gamepad2.right_stick_y < 0) {
             this.elevator.setPower(-gamepad2.right_stick_y);

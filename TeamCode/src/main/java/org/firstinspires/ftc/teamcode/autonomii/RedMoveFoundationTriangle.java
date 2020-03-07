@@ -82,7 +82,7 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(500);
+                    sleep(750);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
@@ -91,13 +91,13 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     sleep(TimeOffsetVoltage.calculateDistance(voltage, 160));
                     this.mecanumDrive.stopMoving();
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0);
-                    sleep(500);
+                    sleep(1000);
                     this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 2:
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.5, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 55));
+                    sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 75));
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 0.4, 0);
                     sleep(750);
                     this.mecanumDrive.stopMoving();
@@ -115,10 +115,10 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0.1);
                     sleep(TimeOffsetVoltage.calculateDistance(this.voltage, 130));
                     this.mecanumDrive.stopMoving();
-                    // bump off the wall
-                    /*this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(100);
-                    this.mecanumDrive.stopMoving();*/
+                    // move to right
+                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), -1, 0);
+                    sleep(1300);
+                    this.mecanumDrive.stopMoving();
                     step++;
                     break;
                 case 5:

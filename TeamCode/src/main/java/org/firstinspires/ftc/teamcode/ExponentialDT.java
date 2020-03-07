@@ -146,7 +146,7 @@ public class ExponentialDT extends OpMode implements TeleOpConstants, Autonomous
 
         // elevator
         if (gamepad2.right_stick_y >= 0) {
-            this.elevator.setPower(-gamepad2.right_stick_y* 0.5);
+            this.elevator.setPower(-gamepad2.right_stick_y* 0.65);
         }
         else if (gamepad2.right_stick_y < 0) {
             this.elevator.setPower(-gamepad2.right_stick_y );
