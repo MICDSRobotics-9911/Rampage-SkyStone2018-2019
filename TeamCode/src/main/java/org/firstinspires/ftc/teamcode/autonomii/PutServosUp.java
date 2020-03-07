@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomii;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -21,11 +22,11 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 import java.util.concurrent.TimeoutException;
 
-
-//Baz, if u can see this then you are good to work for the rest of the evening
-//these comments should appear on your version of the code
-
+/**
+ * @deprecated
+ */
 @Autonomous(name = "PutServosUp", group = "Blue")
+@Disabled
 public class PutServosUp extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
     //this is a test
     private Robot robot;
