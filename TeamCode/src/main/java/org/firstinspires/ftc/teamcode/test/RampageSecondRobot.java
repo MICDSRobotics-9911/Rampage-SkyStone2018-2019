@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.test;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -16,7 +17,11 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
+/**
+ * @deprecated
+ */
 @TeleOp(name = "Second Robot DT", group = "Basic")
+@Disabled
 public class RampageSecondRobot extends OpMode {
 
     private Robot robot;

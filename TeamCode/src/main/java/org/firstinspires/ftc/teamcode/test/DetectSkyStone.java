@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
 /**
  * Prototype program for detetcting the skystone
+ * @deprecated
  */
 @Autonomous(name = "DetectSkyStone", group = "Test")
 @Disabled
