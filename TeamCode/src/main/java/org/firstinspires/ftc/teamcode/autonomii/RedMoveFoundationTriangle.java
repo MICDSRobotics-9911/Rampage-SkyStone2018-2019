@@ -82,7 +82,7 @@ public class RedMoveFoundationTriangle extends LinearOpMode implements Autonomou
                 case 0:
                     // move backwards
                     this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0);
-                    sleep(650);
+                    sleep(500);
                     this.mecanumDrive.stopMoving();
                     this.step++;
                     break;
