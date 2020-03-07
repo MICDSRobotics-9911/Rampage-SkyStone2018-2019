@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomii;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,13 +19,12 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-
-//Baz, if u can see this then you are good to work for the rest of the evening
-//these comments should appear on your version of the code
-
+/**
+ * @deprecated
+ */
 @Autonomous(name = "BlueBricks", group = "Blue")
+@Disabled
 public class BlueBricks extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
-//this is a test
     private Robot robot;
     private MecanumDrive mecanumDrive;
     private ColorSensor colorSensor;

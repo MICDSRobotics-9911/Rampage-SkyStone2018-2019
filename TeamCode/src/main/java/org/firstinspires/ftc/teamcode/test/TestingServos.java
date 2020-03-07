@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.autonomii;
+package org.firstinspires.ftc.teamcode.test;
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -14,14 +13,13 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.lib.AutonomousConstants;
 import org.firstinspires.ftc.teamcode.lib.TeleOpConstants;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.IMUWrapper;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
-import java.util.concurrent.TimeoutException;
-
-@Autonomous(name = "LucasAuto", group = "Generic")
-public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
+@Autonomous(name = "TestingServos", group = "Red")
+public class TestingServos extends LinearOpMode implements AutonomousConstants, TeleOpConstants {
 
     private Robot robot;
     private MecanumDrive mecanumDrive;
@@ -35,12 +33,14 @@ public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, 
     private TouchSensor touchSensorLeft;
     private TouchSensor touchSensorRight;
     private DigitalChannel frontSwitch;
+    private IMUWrapper imuWrapper;
     private double voltage;
     private MotorPair intake;
 
+
     private float hsvValues[] = {0F, 0F, 0F};
     private final double SCALE_FACTOR = 355;
-    private int step = 0;
+    private int step = -5;
 
     public void runOpMode() {
         // init
@@ -58,6 +58,14 @@ public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, 
         this.frontSwitch = hardwareMap.get(DigitalChannel.class, "front_switch");
         this.voltage = hardwareMap.voltageSensor.get("Expansion Hub 10").getVoltage();
         this.intake = new MotorPair(hardwareMap, "intake1", "intake2");
+        this.imuWrapper = new IMUWrapper(hardwareMap);
+
+
+        // brakes!
+        this.mecanumDrive.getMinorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMinorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMajorDiagonal().getMotor1().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.mecanumDrive.getMajorDiagonal().getMotor2().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
@@ -78,89 +86,30 @@ public class LucasLiamAuto extends LinearOpMode implements AutonomousConstants, 
             telemetry.addData("Alpha", this.colorSensor.alpha());
             telemetry.update();
 
-            switch (step) {
-                // TODO: may have to implement code for purging our capstone (orange block)
 
-                // first we have to approach the stones
-                case 0:
-                    this.assist.setPosition(0.75);
-                    this.intake.getMotor1().setPower(0);
-                    this.intake.getMotor2().setPower(0);
+            double comparator =  0.00008;
+            boolean loop = true;
 
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -1, 0);
-                    sleep(TimeOffsetVoltage.calculateDistance(voltage, 53));
-                    this.mecanumDrive.stopMoving();
-                    // we should now be in position to start scanning the bricks
-                    step++;
-                    break;
+            while (loop) {
 
-                case 1:
+                this.sleep(50);
+                this.assist.setPosition((0.4));
 
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0);
-                    sleep(1300);
-                    this.mecanumDrive.stopMoving();
-                    /*
-                    if(!(((int) this.hsvValues[0]) < 85)){
-                        this.mecanumDrive.stopMoving();
-                        step++;
-                    }
+                if ((Math.abs(this.assist.getPosition()- 0.4) < comparator)){
+                    telemetry.addLine("no pressure, we are on target");
+                }
 
-                      */
-
-                    step++;
-                    break;
-
-                case 2:
-
-                    this.intake.getMotor1().setPower(-1.0);
-                    this.intake.getMotor2().setPower(1.0);
-
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.3, 0);
-                    sleep(500);
-
-                    this.intake.getMotor1().setPower(0.0);
-                    this.intake.getMotor2().setPower(0.0);
-
-
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.4, 0);
-                    sleep(1000);
-
-                    this.intake.getMotor1().setPower(-1);
-                    this.intake.getMotor2().setPower(1.0);
-
-
-                    this.mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), -0.6, 0);
-                    sleep(500);
-
-                    this.intake.getMotor1().setPower(1);
-                    this.intake.getMotor2().setPower(1.0);
-
-
-                    this.mecanumDrive.stopMoving();
-                    this.intake.getMotor1().setPower(-1.0);
-                    this.intake.getMotor2().setPower(1.0);
-                    sleep(1600);
-                    step++;
-                    break;
-
-                case 3:
-                    this.intake.getMotor1().setPower(0);
-                    this.intake.getMotor2().setPower(0);
-                    this.mecanumDrive.stopMoving();
-
-
-
-
-                    }
-
+                else{
+                    telemetry.addLine("pressure detected");
+                }
 
 
             }
 
 
 
-            }
         }
 
-
+    }
+}

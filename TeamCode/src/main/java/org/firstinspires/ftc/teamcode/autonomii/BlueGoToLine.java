@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomii;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,12 @@ import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MotorPair;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.Robot;
 
+/**
+ * @deprecated
+ * @see BlueGoToLineSquare
+ */
 @Autonomous(name = "go to line", group = "Red")
+@Disabled
 public class BlueGoToLine extends LinearOpMode implements AutonomousConstants {
 
     private Robot robot;
