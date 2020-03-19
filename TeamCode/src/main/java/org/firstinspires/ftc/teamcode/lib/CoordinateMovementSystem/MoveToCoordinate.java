@@ -20,7 +20,7 @@ public class MoveToCoordinate { //declare class
         int currentY = 0; // always reset the positioning variables to 0. This is the one for y values
 
 
-
+        while(!(Math.abs(targetX-currentX)<3)||!(Math.abs(targetY-currentY)<3)) { //begin loop to send robot on its way to target
 
             while (currentX < targetX) { //for as long as we need to go to the RIGHT
                 mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); //move to the RIGHT
@@ -98,7 +98,9 @@ public class MoveToCoordinate { //declare class
             } //end while (BACKWARD)
 
 
-
-   
+        }//mission accomplised. Robot is in position
+        lop.telemetry.addLine(("Task Accomplished!"));
+        lop.telemetry.addLine("The robot was arrived at/near (" + targetX + ", " + targetY + ").");
+        lop.telemetry.addLine("Moving on to next set of instructions in main autonomous class...");
     } //end method
 } // end class
