@@ -20,7 +20,7 @@ public class MoveToCoordinate { //declare class
         int currentY = 0; // always reset the positioning variables to 0. This is the one for y values
 
 
-        while(!(Math.abs(targetX-currentX)<3)||!(Math.abs(targetY-currentY)<3)) { //begin loop to send robot on its way to target
+
 
             while (currentX < targetX) { //for as long as we need to go to the RIGHT
                 mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); //move to the RIGHT
@@ -28,7 +28,15 @@ public class MoveToCoordinate { //declare class
                 currentX = currentX + 1; //update current variable values accordingly
                 mecanumDrive.stopMoving(); //stop
 
-
+                if(right.isPressed()){ //determine if colission has occured while moving right
+                    mecanumDrive.complexDrive(MecanumDrive.Direction.LEFT.angle(), 1, 0); //we need to get away from the collision by moving in the opposite direction
+                    lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 4)); //only go a small distance
+                    currentY = currentY - 4; //update current variable values accordingly
+                    mecanumDrive.stopMoving(); //stop
+                    lop.telemetry.addLine("The robot has detected a colission and has backed away");
+                    // TODO: 3/19/2020 Implement Gyro for Angle correction in the event of a collision
+                    // TODO: 3/19/2020 After Implementing Course Correction, give the robot a way to figure out how to continue on its mission
+                }
 
 
             } //end while (RIGHT)
@@ -40,7 +48,15 @@ public class MoveToCoordinate { //declare class
                 currentX = currentX - 1; //update current variable values accordingly
                 mecanumDrive.stopMoving(); //stop
 
-
+                if(left.isPressed()){ //determine if colission has occured while moving left
+                    mecanumDrive.complexDrive(MecanumDrive.Direction.RIGHT.angle(), 1, 0); //we need to get away from the collision by moving in the opposite direction
+                    lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 4)); //only go a small distance
+                    currentY = currentY + 4; //update current variable values accordingly
+                    mecanumDrive.stopMoving(); //stop
+                    lop.telemetry.addLine("The robot has detected a colission and has backed away");
+                    // TODO: 3/19/2020 Implement Gyro for Angle correction in the event of a collision
+                    // TODO: 3/19/2020 After Implementing Course Correction, give the robot a way to figure out how to continue on its mission
+                }
 
             } //end while (LEFT)
 
@@ -51,7 +67,15 @@ public class MoveToCoordinate { //declare class
                 currentY = currentY + 1; //update current variable values accordingly
                 mecanumDrive.stopMoving(); //stop
 
-
+                if(front.isPressed()){ //determine if colission has occured while moving forward
+                    mecanumDrive.complexDrive(MecanumDrive.Direction.DOWN.angle(), 1, 0); //we need to get away from the collision by moving in the opposite direction
+                    lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 4)); //only go a small distance
+                    currentY = currentY - 4; //update current variable values accordingly
+                    mecanumDrive.stopMoving(); //stop because of colission
+                    lop.telemetry.addLine("The robot has detected a colission and has backed away");
+                    // TODO: 3/19/2020 Implement Gyro for Angle correction in the event of a collision
+                    // TODO: 3/19/2020 After Implementing Course Correction, give the robot a way to figure out how to continue on its mission
+                }
 
             } //end while (FORWARD)
 
@@ -62,14 +86,19 @@ public class MoveToCoordinate { //declare class
                 currentY = currentY - 1; //update current variable values accordingly
                 mecanumDrive.stopMoving(); //stop
 
-
+                if(back.isPressed()){ //determine if colission has occured while moving backward
+                    mecanumDrive.complexDrive(MecanumDrive.Direction.UP.angle(), 1, 0); //we need to get away from the collision by moving in the opposite direction
+                    lop.sleep(TimeOffsetVoltage.calculateDistance(voltage, 4)); //only go a small distance
+                    mecanumDrive.stopMoving(); //stop
+                    lop.telemetry.addLine("The robot has detected a colission and has backed away");
+                    // TODO: 3/19/2020 Implement Gyro for Angle correction in the event of a collision
+                    // TODO: 3/19/2020 After Implementing Course Correction, give the robot a way to figure out how to continue on its mission
+                }
 
             } //end while (BACKWARD)
 
 
-        }//mission accomplised. Robot is in position
-        lop.telemetry.addLine(("Task Accomplished!"));
-        lop.telemetry.addLine("The robot was arrived at/near (" + targetX + ", " + targetY + ").");
-        lop.telemetry.addLine("Moving on to next set of instructions in main autonomous class...");
+
+   
     } //end method
 } // end class
