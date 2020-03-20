@@ -7,10 +7,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.robotplus.autonomous.TimeOffsetVoltage;
 import org.firstinspires.ftc.teamcode.robotplus.hardware.MecanumDrive;
+import org.firstinspires.ftc.teamcode.robotplus.hardware.ODSasTouchSensor;
 
 
 public class MoveToCoordinate { //declare class
-    public static void MoveToCoordinate(int targetX, int targetY, TouchSensor front, TouchSensor back, TouchSensor left, TouchSensor right, LinearOpMode lop, MecanumDrive mecanumDrive, double voltage) { //declare method
+    public static void MoveToCoordinate(int targetX, int targetY, ODSasTouchSensor front, ODSasTouchSensor back, ODSasTouchSensor left, ODSasTouchSensor right, LinearOpMode lop, MecanumDrive mecanumDrive, double voltage) { //declare method
         // we need a target coordinate, inputs from touch sensors on each side of the robot, a linearOpMode, MecanumDrive, and values for voltage
 
 
